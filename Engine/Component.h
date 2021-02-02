@@ -27,12 +27,14 @@ struct SpriteComponent : public Component
 		auto query = SDL_QueryTexture(Texture, nullptr, nullptr, &w, &h);
 		DstRect.w = SrcRect.w = w;
 		DstRect.h = SrcRect.h = h;
+		RotationAngle = 0;
 	};
 
 	SDL_Surface* Surface;
 	SDL_Texture* Texture;
 	SDL_Rect SrcRect;
 	SDL_Rect DstRect;
+	double* RotationAngle;
 	SDL_Point* Point;
 	SDL_RendererFlip FlipRule;
 	int RenderPriority;
@@ -45,10 +47,16 @@ struct AnimatorComponent : public Component
 	{
 		frames = textures.size();
 	}
+
+	SpriteComponent* rMainSprite;
 	std::vector<SDL_Texture*> textures;
 	float SpeedRate;
 	int frames = 1;
 	bool bLoop = false;
+
+	int current_frame = 0;
+	double frame_current_time = 0;
+	double frame_max_time = 0;
 };
 
 struct RelocatableComponent : public Component

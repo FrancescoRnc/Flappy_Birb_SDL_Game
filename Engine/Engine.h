@@ -6,17 +6,11 @@
 #include "Clock.h"
 #include "FileManager.h"
 #include "ComponentManager.h"
+#include "RenderManager.h"
 #include "InputHandler.h"
 
 
-struct WindowRectInfo
-{
-	const char* Title;
-	int ScreenX;
-	int ScreenY;
-	int Width;
-	int Height;
-};
+
 
 struct Engine
 {

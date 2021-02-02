@@ -1,3 +1,7 @@
-﻿  main.cpp
-D:\Development\C++\FlappyBirb_SDL\Engine\Component.h(46,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+﻿  ObjectPacks.cpp
+D:\Development\C++\FlappyBirb_SDL\Engine\Component.h(48,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+D:\Development\C++\FlappyBirb_SDL\Engine\ObjectPacks.cpp(39,42): warning C4305: '=': truncation from 'int' to 'Uint8'
+D:\Development\C++\FlappyBirb_SDL\Engine\ObjectPacks.cpp(39,32): warning C4309: '=': truncation of constant value
+D:\Development\C++\FlappyBirb_SDL\Engine\ObjectPacks.cpp(103,38): warning C4305: '=': truncation from 'int' to 'Uint8'
+D:\Development\C++\FlappyBirb_SDL\Engine\ObjectPacks.cpp(103,28): warning C4309: '=': truncation of constant value
   FlappyBirb_SDL.vcxproj -> D:\Development\C++\FlappyBirb_SDL\x64\Debug\FlappyBirb_SDL.exe

@@ -5,12 +5,12 @@
 PlayerObjPack::PlayerObjPack()
 {
 	MainObject = new GameObject("Player");
-	Sprite = new SpriteComponent(nullptr, FileManager::Get()->
-								 GetTexture("redbird-midflap"),
-								 {}, {70, 200}, nullptr, SDL_FLIP_NONE);
 	Animator = new AnimatorComponent({FileManager::Get()->GetTexture("redbird-upflap"),
 									  FileManager::Get()->GetTexture("redbird-midflap"),
-									  FileManager::Get()->GetTexture("redbird-downflap")}, true);
+									  FileManager::Get()->GetTexture("redbird-downflap"),
+									  FileManager::Get()->GetTexture("redbird-midflap")}, true);
+	Sprite = new SpriteComponent(nullptr, Animator->textures[0],
+								 {}, {70, 200}, nullptr, SDL_FLIP_NONE);
 	Movement = new MovableComponent();
 	Gravity = new GravityComponent();
 	Collision = new CollisionComponent();
@@ -19,14 +19,16 @@ PlayerObjPack::PlayerObjPack()
 
 	GameOver = new GameObject("Game Over");
 	GameOverSprite = new SpriteComponent(nullptr, FileManager::Get()->
-											  GetTexture("gameover"),
-											  {}, {39, 100}, nullptr, SDL_FLIP_NONE);
+										 GetTexture("gameover"),
+										 {}, {39, 100}, nullptr, SDL_FLIP_NONE);
 
 }
 
 void PlayerObjPack::Load()
 {
 	Sprite->RenderPriority = 20;
+	Animator->rMainSprite = Sprite;
+	Animator->frame_max_time = 1.f / 15;
 	Movement->Rects = {&Sprite->DstRect};
 	Gravity->GravityForce = 98.1f * 5.5f;
 	Gravity->Movable = Movement;
@@ -66,7 +68,7 @@ void PlayerObjPack::Load()
 	};
 
 	MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite", Sprite);
-	//MainObject->BindComponent<AnimatorComponent>("Animator", "Flap Animation", Animator);
+	MainObject->BindComponent<AnimatorComponent>("Animator", "Flap Animation", Animator);
 	MainObject->BindComponent<MovableComponent>("Movable", "Movement", Movement);
 	MainObject->BindComponent<CollisionComponent>("Collision", "Collider", Collision);
 	MainObject->BindComponent<GravityComponent>("Gravity", "Gravity",  Gravity);
@@ -130,13 +132,11 @@ PipesPairObjPack::PipesPairObjPack()
 	MainObject = new GameObject("Pipes");
 
 	TopSprite = new SpriteComponent(nullptr, FileManager::Get()->
-									  GetTexture("pipe-green"),
-									  {}, {}, nullptr, SDL_FLIP_VERTICAL);
+									GetTexture("pipe-green"),
+									{}, {}, nullptr, SDL_FLIP_VERTICAL);
 	TopCollision = new CollisionComponent();
 	
-	BottomSprite = new SpriteComponent(/*nullptr, FileManager::Get()->
-									   GetTexture("pipe-green"),
-									   {}, {}, nullptr, SDL_FLIP_NONE*/);
+	BottomSprite = new SpriteComponent();
 	BottomCollision = new CollisionComponent();
 	
 	Movement = new MovableComponent();
@@ -177,7 +177,6 @@ void PipesPairObjPack::Load()
 	Relocator->LimitX = -60;
 	Relocator->Rects = {
 		&TopSprite->DstRect,
-		//&BottomSprite->DstRect
 	};
 	Relocator->CheckPosition = [this](SDL_Rect* outRect) 
 	{ 

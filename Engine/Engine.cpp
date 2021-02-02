@@ -59,6 +59,8 @@ int Engine::Init()
 
 	current_scene->LoadObjects();
 
+	std::cout << "Initialization Completed!" << std::endl;
+
 	return 0;
 }
 int Engine::Loop()

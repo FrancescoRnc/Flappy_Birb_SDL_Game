@@ -98,7 +98,24 @@ void Scene::UpdateComponents(const float deltatime, std::map<std::string, std::v
 		}
 	}
 
-	//if (Pipes->CheckPipesX()) Pipes->LocatePipes();
+	// Animations
+	auto animatorComps = cMap["Animator"];
+	for (auto comp : animatorComps)
+	{
+		if (comp->bActive)
+		{
+			auto c = reinterpret_cast<AnimatorComponent*>(comp);
+			c->frame_current_time += deltatime;
+			//std::cout << "Time: " << c->frame_current_time << std::endl;
+			if (c->frame_current_time >= c->frame_max_time)
+			{
+				c->frame_current_time = 0;
+				c->current_frame = (c->current_frame+1) % c->frames;
+				c->rMainSprite->Texture = c->textures[c->current_frame];
+				//std::cout << "Current Frame: " << c->current_frame << std::endl;
+			}
+		}
+	}
 }
 void Scene::DrawComponents(SDL_Renderer* renderer, std::vector<Component*> sprites)
 {
