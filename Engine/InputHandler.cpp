@@ -1,7 +1,7 @@
 #include "InputHandler.h"
 
 // Keyboard and Mouse
-int KeyMouseInputHandler::InitializeInput()
+int KeyMouseInputHandler::Initialize()
 {
 	std::cout << "Initializing Keyboard & Mouse Input..." << std::endl;
 
@@ -22,12 +22,18 @@ int KeyMouseInputHandler::Loop()
 			if (ev.key.keysym.sym == SDLK_ESCAPE)
 				return 1;
 
-			if (ev.key.keysym.sym == SDLK_SPACE)
+			/*if (ev.key.keysym.sym == SDLK_SPACE)
 			{
 				auto c = reinterpret_cast<FlapComponent*>(ComponentManager::Get()->ComponentMap["Flap"][0]);
 				c->DoFlap->Action();
+			}*/
+			for (auto action : InputMap)
+			{
+				if (ev.key.keysym.sym == action.first)
+				{
+					action.second->Action();
+				}
 			}
-			
 		}
 
 	}
@@ -36,7 +42,7 @@ int KeyMouseInputHandler::Loop()
 
 
 // Joystick
-int JoystickInputHandler::InitializeInput()
+int JoystickInputHandler::Initialize()
 {
 	std::cout << "Initializing Joystick Input..." << std::endl;
 

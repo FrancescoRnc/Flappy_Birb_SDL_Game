@@ -5,19 +5,17 @@
 #include <string>
 #include "Component.h"
 
+#define RULE_OF_FIVE(I) I(const I&) = delete; I(I&&) = delete; I operator= (const I&) = delete; I operator= (I&&) = delete; ~I();
 
 class ComponentManager
 {
 	public:
 	ComponentManager();
 
+	RULE_OF_FIVE(ComponentManager);
+
 	std::map<std::string, std::vector<Component*>> ComponentMap;
 	std::map<std::string, std::vector<Component*>> ComponentExclusionMap;
-	//std::vector<Component*> BaseComponents;
-	//std::vector<SpriteComponent*> SpriteComponents;
-	//std::vector<AnimatorComponent*> AnimatorComponents;
-	//std::vector<MovableComponent*> MovableComponents;
-	//std::vector<GravityComponent*> GravityComponents;
 
 	static ComponentManager* Get()
 	{

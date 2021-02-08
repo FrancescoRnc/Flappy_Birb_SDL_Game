@@ -2,13 +2,17 @@
 #include <SDL.h>
 #include "GameObject.h"
 #include "InputHandler.h"
+#include "Interfaces.h"
+#include "RenderManager.h"
 
-class IObjectPack
+/*class IObjectPack
 {
 	public:
 
 	virtual void Load() = 0;
-};
+
+	virtual void Update(const double deltatime) = 0;
+};*/
 
 class PlayerObjPack : public IObjectPack
 {
@@ -19,6 +23,7 @@ class PlayerObjPack : public IObjectPack
 	SpriteComponent* Sprite;
 	AnimatorComponent* Animator;
 	MovableComponent* Movement;
+	RotatorComponent* Rotator;
 	CollisionComponent* Collision;
 	GravityComponent* Gravity;
 	FlapComponent* Flap;
@@ -29,6 +34,8 @@ class PlayerObjPack : public IObjectPack
 	std::function<void()> OnGameOver;
 
 	virtual void Load() override;
+
+	virtual int Update(const double deltatime) override;
 };
 
 class BackgroundObjPack : public IObjectPack
@@ -44,6 +51,8 @@ class BackgroundObjPack : public IObjectPack
 	RelocatableComponent* BGRelocator;
 
 	virtual void Load() override;
+
+	virtual int Update(const double deltatime) override;
 };
 
 class PipesPairObjPack : public IObjectPack
@@ -61,9 +70,9 @@ class PipesPairObjPack : public IObjectPack
 
 	virtual void Load() override;
 
-	void LocatePipes();
+	virtual int Update(const double deltatime) override;
 
-	bool CheckPipesX();
+	void LocatePipes();
 	
 	private:
 	int pipeHeight;

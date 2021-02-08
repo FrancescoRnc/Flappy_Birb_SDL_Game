@@ -25,7 +25,7 @@ class GameObject
 	std::map<std::string, Component*> Components;
 
 	template<typename T>
-	auto BindComponent(std::string type, std::string name, T* component) -> Component*
+	auto BindComponent(std::string type, std::string name, T* component)
 	{
 		Components.insert(std::pair<std::string, T*>(name, component));
 		ComponentManager::Get()->AddComponent(type, component);

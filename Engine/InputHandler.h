@@ -2,22 +2,18 @@
 #include <SDL.h>
 #include <iostream>
 #include <functional>
+#include <map>
 #include "ComponentManager.h"
+#include "Interfaces.h"
 
-class IInputHandler
-{
-	public:
-
-	virtual int InitializeInput() = 0;
-
-	virtual int Loop() = 0;
-};
 
 class KeyMouseInputHandler : public IInputHandler
 {
 	public:
 
-	virtual int InitializeInput() override;
+	std::map<SDL_KeyCode, InputAction*> InputMap;
+
+	virtual int Initialize() override;
 
 	virtual int Loop() override;
 };
@@ -26,16 +22,22 @@ class JoystickInputHandler : public IInputHandler
 {
 	public:
 
-	virtual int InitializeInput() override;
+	//std::map<, std::function<void()>> InputMap;
+
+	virtual int Initialize() override;
 
 	virtual int Loop() override;
+};
+
+struct InputContainer
+{
+	virtual void Insert() = 0;
 };
 
 
 struct InputAction
 {
 	std::function<void()> Action = {};
-
 
 	void operator() ()
 	{

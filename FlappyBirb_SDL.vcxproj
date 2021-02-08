@@ -157,6 +157,7 @@
     <ClInclude Include="Engine\Component.h" />
     <ClInclude Include="Engine\Clock.h" />
     <ClInclude Include="Engine\Engine.h" />
+    <ClInclude Include="Engine\Interfaces.h" />
     <ClInclude Include="Engine\Scene.h" />
     <ClInclude Include="Engine\stb_image.h" />
     <ClInclude Include="Engine\GameObject.h" />
@@ -338,11 +339,13 @@
     <ClInclude Include="SDL2\include\SDL_vulkan.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitignore" />
     <None Include="Assets\audio\die.ogg" />
     <None Include="Assets\audio\hit.ogg" />
     <None Include="Assets\audio\point.ogg" />
     <None Include="Assets\audio\swoosh.ogg" />
     <None Include="Assets\audio\wing.ogg" />
+    <None Include="README.md" />
     <None Include="SDL2.dll" />
     <None Include="SDL2\lib\x64\SDL2.dll" />
   </ItemGroup>

@@ -17,12 +17,12 @@ ComponentManager::ComponentManager()
 		{"Flap", {}}
 	};
 
-	//BaseComponents = {};
-	//SpriteComponents = {};
-	//AnimatorComponents = {};
-	//MovableComponents = {};
-	//GravityComponents = {};
 	_instance = this;
+}
+
+ComponentManager::~ComponentManager()
+{
+
 }
 
 void ComponentManager::SortSprites()

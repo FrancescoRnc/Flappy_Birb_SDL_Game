@@ -7,12 +7,14 @@
 #include <filesystem>
 
 //#define CHECK(I) if (I) return 1;
+#define RULE_OF_FIVE(I) I(const I&) = delete; I(I&&) = delete; I operator= (const I&) = delete; I operator= (I&&) = delete; ~I();
 
 class FileManager
 {
 	public:
 	FileManager();
-	~FileManager();
+
+	RULE_OF_FIVE(FileManager);
 
 	static FileManager* Get()
 	{

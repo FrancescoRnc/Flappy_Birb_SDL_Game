@@ -2,8 +2,6 @@
 #include <SDL.h>
 #include <iostream>
 #include "Engine/Engine.h"
-#include "Engine/FileManager.h"
-#include "Engine/ComponentManager.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "Engine/stb_image.h"
 
@@ -14,9 +12,6 @@
 #define GAME_RESOLUTION 288, 512;
 
 #define CHECK(I) if (I) goto end;
-
- //Engine::WinUtils{"Flappy Birb", FULLHD_9_16_RESOLUTION, 100.f, 1160.f};
-
 
  WindowRectInfo wri{"Flappy Birb", 500, 50, 270, 480};
 
@@ -30,7 +25,7 @@ int main()
 	int return_value = 0;
 	Engine* engine = new Engine(wri);
 
-	CHECK(engine->Init());
+	CHECK(engine->Initialize());
 	CHECK(engine->Loop());
 	
 	end:

@@ -1,24 +1,39 @@
 #include "RenderManager.h"
 
+RenderManager* RenderManager::_instance = nullptr;
+
 RenderManager::RenderManager(WindowRectInfo _info)
 {
 	WindowInfo = _info;
 	
+	SpriteBuffer = {
+		{RenderLayer::Background, {}},
+		{RenderLayer::Environment, {}},
+		{RenderLayer::BackgroundBase, {}},
+		{RenderLayer::Player, {}},
+		{RenderLayer::HUD, {}}
+	};
+
+	_instance = this;
 }
 
 RenderManager::~RenderManager()
 {
-
+	SDL_DestroyRenderer(Renderer);
+	SDL_DestroyWindow(Window);
 }
 
-int RenderManager::Init()
+int RenderManager::Initialize()
 {
-	std::cout << "Initialization..." << std::endl;
-	if (SDL_Init(SDL_INIT_VIDEO | 0))
-	{
-		std::cout << "Error during Initialization" << std::endl;
-		return 1;
-	}
+	//std::cout << "Initialization..." << std::endl;
+	//if (SDL_Init(SDL_INIT_VIDEO /*| 
+	//			 SDL_INIT_AUDIO | 
+	//			 SDL_INIT_GAMECONTROLLER | 
+	//			 SDL_INIT_TIMER*/))
+	//{
+	//	std::cout << "Error during Initialization" << std::endl;
+	//	return 1;
+	//}
 
 	std::cout << "Creating Window..." << std::endl;
 	Window = SDL_CreateWindow(WindowInfo.Title,
@@ -50,16 +65,39 @@ int RenderManager::Init()
 
 int RenderManager::Draw()
 {
-	for (auto comp : SpriteComponents)
+	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(Renderer);
+
+	for (auto layer:SpriteBuffer)
 	{
-		if (SDL_RenderCopyEx(Renderer,
-							 comp->Texture,
-							 &comp->SrcRect,
-							 &comp->DstRect,
-							 *comp->RotationAngle,
-							 comp->Point,
-							 comp->FlipRule))
-			return 1;
+		for (auto comp : layer.second)
+		{
+			if (comp->bActive)
+				if (SDL_RenderCopyEx(Renderer,
+									 comp->Texture,
+									 &comp->SrcRect,
+									 &comp->DstRect,
+									 *comp->RotationAngleDegree,
+									 comp->Point,
+									 comp->FlipRule))
+				{
+					//SDL_RenderPresent(Renderer);
+					return 1;
+				}
+		}
 	}
+
+	SDL_RenderPresent(Renderer);
+
 	return 0;
+}
+
+void RenderManager::RegisterSprite(RenderLayer layer, SpriteComponent* sprite)
+{
+	//auto buffer = SpriteBuffer[layer];
+	//if (buffer == nullptr)
+	//{
+	//	SpriteBuffer;
+	//}
+	SpriteBuffer[layer].push_back(sprite);
 }

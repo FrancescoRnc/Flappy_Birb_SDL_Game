@@ -31,7 +31,7 @@ void Scene::LoadObjects()
 	
 	Pipes->LocatePipes();
 }
-void Scene::UpdateComponents(const float deltatime, std::map<std::string, std::vector<Component*>> cMap)
+void Scene::UpdateComponents(const double deltatime, std::map<std::string, std::vector<Component*>> cMap)
 {
 	// Gravity
 	auto gravityComps = cMap["Gravity"];
@@ -41,12 +41,12 @@ void Scene::UpdateComponents(const float deltatime, std::map<std::string, std::v
 		
 		if (comp->bActive)
 		{
-			c->Movable->VMoveSpeed += (c->GravityForce * deltatime);
+			c->refMovable->VMoveSpeed += (c->GravityForce * deltatime);
 		}
-		else c->Movable->VMoveSpeed = 0;
+		else c->refMovable->VMoveSpeed = 0;
 	}
 
-	// Movable Objetcs
+	// refMovable Objetcs
 	auto movableComp = cMap["Movable"];
 	for (auto comp : movableComp)
 	{
@@ -55,8 +55,8 @@ void Scene::UpdateComponents(const float deltatime, std::map<std::string, std::v
 			auto c = reinterpret_cast<MovableComponent*>(comp);
 			for (auto mov : c->Rects)
 			{
-				mov->x += (c->HMoveSpeed * deltatime);
-				mov->y += (c->VMoveSpeed * deltatime);
+				mov->x += (int)(c->HMoveSpeed * deltatime);
+				mov->y += (int)(c->VMoveSpeed * deltatime);
 			}
 		}
 	}
@@ -84,10 +84,10 @@ void Scene::UpdateComponents(const float deltatime, std::map<std::string, std::v
 			auto c = reinterpret_cast<CollisionComponent*>(comp);
 			for (auto other : colliders)
 			{
-				if (other->bActive)
+				if (other->bActive && comp != other)
 				{
 					auto o = reinterpret_cast<CollisionComponent*>(other);
-					if ((c->CollisionPin & o->CollisionBitmask) && SDL_HasIntersection(c->Rect, o->Rect))
+					if ((c->CollisionBitmask & o->CollisionPin) && SDL_HasIntersection(c->Rect, o->Rect))
 					{
 						c->OnCollision(o->Rect);
 						o->OnCollision(c->Rect);
@@ -116,6 +116,8 @@ void Scene::UpdateComponents(const float deltatime, std::map<std::string, std::v
 			}
 		}
 	}
+
+	Player->Update(deltatime);
 }
 void Scene::DrawComponents(SDL_Renderer* renderer, std::vector<Component*> sprites)
 {
@@ -125,7 +127,9 @@ void Scene::DrawComponents(SDL_Renderer* renderer, std::vector<Component*> sprit
 		if (comp->bActive)
 		{
 			auto c = reinterpret_cast<SpriteComponent*>(comp);
-			SDL_RenderCopyEx(renderer, c->Texture, &c->SrcRect, &c->DstRect, 0, c->Point, c->FlipRule);
+			SDL_RenderCopyEx(renderer, c->Texture, &c->SrcRect, &c->DstRect, 
+							 *c->RotationAngleDegree, c->Point, c->FlipRule);
+			//std::cout << comp->Owner->ObjectName << " rotation: " << *c->RotationAngleDegree << std::endl;
 		}
 	}
 }

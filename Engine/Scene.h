@@ -11,14 +11,14 @@ struct Scene
 	~Scene();
 
 	void LoadObjects();
-	void UpdateComponents(const float deltatime, std::map<std::string, std::vector<Component*>> cMap);
+	void UpdateComponents(const double deltatime, std::map<std::string, std::vector<Component*>> cMap);
 	void DrawComponents(SDL_Renderer* renderer, std::vector<Component*> sprites);
 
 	private:
 
-	PlayerObjPack* Player;
-	PipesPairObjPack* Pipes;
-	BackgroundObjPack* Background;
+	PlayerObjPack* Player = nullptr;
+	PipesPairObjPack* Pipes = nullptr;
+	BackgroundObjPack* Background = nullptr;
 
 	std::map<std::string, GameObject*> GameObjectMap;
 

@@ -564,6 +564,9 @@
     <ClInclude Include="Engine\RenderManager.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Interfaces.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SDL2\lib\x64\SDL2.dll" />
@@ -573,6 +576,8 @@
     <None Include="Assets\audio\point.ogg" />
     <None Include="Assets\audio\swoosh.ogg" />
     <None Include="Assets\audio\wing.ogg" />
+    <None Include=".gitignore" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="SDL2\lib\x64\SDL2.lib" />
