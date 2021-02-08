@@ -1,2 +1,0 @@
-D:\Development\C++\FlappyBirb_SDL\x64\Debug\FlappyBirb_SDL.exe
-D:\Development\C++\FlappyBirb_SDL\x64\Debug\FlappyBirb_SDL.pdb
