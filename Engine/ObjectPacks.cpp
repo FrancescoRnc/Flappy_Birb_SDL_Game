@@ -45,8 +45,8 @@ void PlayerObjPack::Load()
 	Gravity->bActive = false;
 
 	Collision->Rect = &Sprite->DstRect;
-	Collision->CollisionPin = (uint8_t)0x00000001;
-	Collision->CollisionBitmask = (uint8_t)0x00000110;
+	Collision->CollisionPin = 0x00000001;
+	Collision->CollisionBitmask = 0x00000110;
 	Collision->OnCollision = [this](SDL_Rect* other)
 	{
 		OnGameOver();
@@ -54,7 +54,7 @@ void PlayerObjPack::Load()
 		GameOverSprite->bActive = true;
 		Collision->bActive = false;
 		Flap->bActive = false;
-		std::cout << "Player Collision" << std::endl;
+		//std::cout << "Player Collision" << std::endl;
 	};
 
 	Flap->Gravity = Gravity; 
@@ -66,6 +66,12 @@ void PlayerObjPack::Load()
 		Movement->VMoveSpeed = -Flap->FlapForce;
 		//std::cout << "Flap Flap!" << std::endl;
 	};
+	Flap->DoFlap->ActionStack.push([this]()
+	{
+		Gravity->bActive = true;
+		Movement->VMoveSpeed = -Flap->FlapForce;
+		//std::cout << "Flap Flap!" << std::endl;
+	});
 
 	GameOverSprite->bActive = false; GameOverSprite->RenderPriority = 100;
 	OnGameOver = [this]()
@@ -104,10 +110,9 @@ int PlayerObjPack::Update(const double deltatime)
 		Movement->VMoveSpeed = 0;
 		Movement->bActive = false;
 	}
-	//*Rotator->Rotation = sin(Movement->VMoveSpeed) * (180.f / M_PI);
-	//std::cout << "Rotation: " << *Rotator->Rotation << std::endl;
 	return 0;
 }
+
 
 BackgroundObjPack::BackgroundObjPack()
 {
@@ -128,19 +133,19 @@ void BackgroundObjPack::Load()
 	BGSprite->RenderPriority = 1;
 	BaseSprite->RenderPriority = 10;
 	Movement->Rects = {
-		&BGSprite->DstRect, 
+		//&BGSprite->DstRect, 
 		&BaseSprite->DstRect, 
 	};
 	Movement->HMoveSpeed = -60.;
 	Collision->Rect = &BaseSprite->DstRect;
-	Collision->CollisionPin = (uint8_t)0x00000100;
-	Collision->CollisionBitmask = (uint8_t)0x00000001;
+	Collision->CollisionPin = 0x00000100;
+	Collision->CollisionBitmask = 0x00000001;
 	Collision->OnCollision = [this](SDL_Rect* other)
 	{
-		std::cout << "Base Collision" << std::endl;
+		//std::cout << "Base Collision" << std::endl;
 	};
 	BGRelocator->Rects = {
-		&BGSprite->DstRect,
+		//&BGSprite->DstRect,
 		&BaseSprite->DstRect,
 	};
 	BGRelocator->LimitX = -(BGSprite->DstRect.w / 2);
@@ -169,6 +174,7 @@ int BackgroundObjPack::Update(const double deltatime)
 	return 0;
 }
 
+
 PipesPairObjPack::PipesPairObjPack()
 {
 	MainObject = new GameObject("Pipes");
@@ -187,20 +193,38 @@ PipesPairObjPack::PipesPairObjPack()
 	SDL_QueryTexture(TopSprite->Texture, nullptr, nullptr, nullptr, &pipeHeight);
 }
 
+PipesPairObjPack::PipesPairObjPack(int x, int y)
+{
+	MainObject = new GameObject("Pipes");
+
+	TopSprite = new SpriteComponent(nullptr, FileManager::Get()->
+									GetTexture("pipe-green"),
+									{}, {x, y}, nullptr, SDL_FLIP_VERTICAL);
+	TopCollision = new CollisionComponent();
+
+	BottomSprite = new SpriteComponent();
+	BottomCollision = new CollisionComponent();
+
+	Movement = new MovableComponent();
+	Relocator = new RelocatableComponent();
+
+	SDL_QueryTexture(TopSprite->Texture, nullptr, nullptr, nullptr, &pipeHeight);
+}
+
 void PipesPairObjPack::Load()
 {
 	TopSprite->RenderPriority = 5;
 	*BottomSprite = *TopSprite;
 	BottomSprite->FlipRule = SDL_FLIP_NONE;
 	TopCollision->Rect = &TopSprite->DstRect;
-	TopCollision->CollisionPin = (uint8_t)0x00000010;
-	TopCollision->CollisionBitmask = (uint8_t)0x00000000;
+	TopCollision->CollisionPin = 0x00000010;
+	TopCollision->CollisionBitmask = 0x00000001;
 	auto onCollision = [this](SDL_Rect* other)
 	{
 		Movement->bActive = false;
 		TopCollision->bActive = false;
 		BottomCollision->bActive = false;
-		std::cout << "Pipe Collision" << std::endl;
+		//std::cout << "Pipe Collision" << std::endl;
 	};
 	TopCollision->OnCollision = onCollision;
 
@@ -210,13 +234,14 @@ void PipesPairObjPack::Load()
 	BottomCollision->CollisionBitmask = TopCollision->CollisionBitmask;
 	BottomCollision->OnCollision = onCollision;
 
+	Movement->bActive = false;
 	Movement->HMoveSpeed = -150;
 	Movement->Rects = {
 		&TopSprite->DstRect,
 		&BottomSprite->DstRect
 	};
 
-	Relocator->LimitX = -60;
+	Relocator->LimitX = -50;
 	Relocator->Rects = {
 		&TopSprite->DstRect,
 	};
@@ -226,13 +251,9 @@ void PipesPairObjPack::Load()
 	};
 	Relocator->RelocateSprites = [this](SDL_Rect* inRect)
 	{
-		TopSprite->DstRect.x = BottomSprite->DstRect.x = 280;
+ 		LocatePipes(inRect->x + 270 + 135 + 50);
 
-		int newBY = rand() % 200 + 100;
-		int pipesOffset = rand() % 50 + 70;
-		int newTY = newBY - pipesOffset - pipeHeight;
-		BottomSprite->DstRect.y = newBY;
-		TopSprite->DstRect.y = newTY;
+		RandomizeY();
 	};
 
 	MainObject->BindComponent<SpriteComponent>("Sprite", "Top Pipe Sprite", TopSprite);
@@ -244,6 +265,8 @@ void PipesPairObjPack::Load()
 	MainObject->BindComponent<CollisionComponent>("Collision", "Top Pipe Collider", TopCollision);
 	MainObject->BindComponent<CollisionComponent>("Collision", "Bottom Pipe Collider", BottomCollision);
 	MainObject->BindComponent<RelocatableComponent>("Relocator", "Relocator", Relocator);
+
+	RandomizeY();
 }
 
 int PipesPairObjPack::Update(const double deltatime)
@@ -251,13 +274,130 @@ int PipesPairObjPack::Update(const double deltatime)
 	return 0;
 }
 
-void PipesPairObjPack::LocatePipes()
+void PipesPairObjPack::LocatePipes(int newX)
 {
-	TopSprite->DstRect.x = BottomSprite->DstRect.x = 280;
+	TopSprite->DstRect.x = BottomSprite->DstRect.x = newX;
+}
 
-	int newBY = rand() % 100 + 200;
+void PipesPairObjPack::LocatePipesAdditive(int addX)
+{
+	TopSprite->DstRect.x = BottomSprite->DstRect.x += addX;
+}
+
+void PipesPairObjPack::RandomizeY()
+{
+	int newBY = rand()%100+200;
 	int pipesOffset = rand() % 50 + 100;
 	int newTY = newBY - pipesOffset - pipeHeight;
 	BottomSprite->DstRect.y = newBY;
 	TopSprite->DstRect.y = newTY;
+}
+
+
+ScoreObjPack::ScoreObjPack(std::vector<PipesPairObjPack*> pairs)
+{
+	MainObject = new GameObject("Score Hitbox");
+
+	Pairs = pairs;
+	CurrentPipesPair = pairs[currentPipesIndex];
+	
+	ScoreCollision = new CollisionComponent();
+}
+
+void ScoreObjPack::Load()
+{
+	Hitbox = {0,0,30,400};
+	ScoreCollision->Rect = &Hitbox;
+	ScoreCollision->CollisionPin = (uint8_t)0x00001000;
+	ScoreCollision->CollisionBitmask = (uint8_t)0x00000001;
+	ScoreCollision->OnCollision = [this](SDL_Rect* other)
+	{
+		//ScoreSystem::Get()->Increase();
+		IncreaseScore();
+		CurrentPipesPair = GetNextPair();
+	};
+
+	MainObject->BindComponent<CollisionComponent>("Collision", "Hitbox", ScoreCollision);
+}
+
+int ScoreObjPack::Update(const double deltatime)
+{
+	Hitbox.x = CurrentPipesPair->TopSprite->DstRect.x + 10;
+	return 0;
+}
+
+PipesPairObjPack* ScoreObjPack::GetNextPair()
+{
+	currentPipesIndex = (currentPipesIndex + 1) % Pairs.size();
+	return Pairs[currentPipesIndex];
+}
+
+void ScoreObjPack::IncreaseScore()
+{
+	ScorePoints += 1;
+	Bridge->refCounter->ChangeNumber();
+	//std::cout << "Score: " << ScorePoints << std::endl;
+}
+
+
+ScoreCounterObjPack::ScoreCounterObjPack()
+{
+	MainObject = new GameObject("UI Score Counter");
+	NumbersTex = {
+		FileManager::Get()->GetTexture("0"),
+		FileManager::Get()->GetTexture("1"),
+		FileManager::Get()->GetTexture("2"),
+		FileManager::Get()->GetTexture("3"),
+		FileManager::Get()->GetTexture("4"),
+		FileManager::Get()->GetTexture("5"),
+		FileManager::Get()->GetTexture("6"),
+		FileManager::Get()->GetTexture("7"),
+		FileManager::Get()->GetTexture("8"),
+		FileManager::Get()->GetTexture("9"),
+	};
+
+	SpriteUnit = new SpriteComponent(nullptr, NumbersTex[0],
+									 {}, {147, 30}, nullptr, SDL_FLIP_NONE);
+	SpriteTen = new SpriteComponent(nullptr, NumbersTex[0],
+									{}, {123, 30}, nullptr, SDL_FLIP_NONE);
+	SpriteHundred = new SpriteComponent(nullptr, NumbersTex[0],
+									    {}, {99, 30}, nullptr, SDL_FLIP_NONE);
+}
+
+void ScoreCounterObjPack::Load()
+{
+	SpriteHundred->RenderPriority =
+		SpriteTen->RenderPriority =
+		SpriteUnit->RenderPriority = 100;
+
+	MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite Unit", SpriteUnit);
+	MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite Ten", SpriteTen);
+	MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite Hundred", SpriteHundred);
+	RenderManager::Get()->RegisterSprite(RenderLayer::HUD, SpriteUnit);
+	RenderManager::Get()->RegisterSprite(RenderLayer::HUD, SpriteTen);
+	RenderManager::Get()->RegisterSprite(RenderLayer::HUD, SpriteHundred);
+}
+
+int ScoreCounterObjPack::Update(const double deltatime)
+{
+
+	return 0;
+}
+
+void ScoreCounterObjPack::ChangeNumber()
+{
+	int unitIndex = Bridge->refScore->ScorePoints % 10;
+	SpriteUnit->Texture = NumbersTex[unitIndex];
+	
+	if (Bridge->refScore->ScorePoints>=10)
+	{
+		unitIndex = (int)((Bridge->refScore->ScorePoints%100)/10);
+		SpriteTen->Texture = NumbersTex[unitIndex];
+	}
+	
+	if (Bridge->refScore->ScorePoints>=100)
+	{
+		unitIndex = (int)((Bridge->refScore->ScorePoints%1000)/100);
+		SpriteHundred->Texture = NumbersTex[unitIndex];
+	}
 }

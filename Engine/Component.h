@@ -114,8 +114,8 @@ struct CollisionComponent : public Component
 	//virtual void Intersection(SDL_Rect *other) = 0;
 	std::function<void(SDL_Rect*)> OnCollision;
 
-	uint8_t CollisionPin = 0;
-	uint8_t CollisionBitmask = 0;
+	unsigned int CollisionPin = 0;
+	unsigned int CollisionBitmask = 0;
 };
 
 struct FlapComponent : public Component

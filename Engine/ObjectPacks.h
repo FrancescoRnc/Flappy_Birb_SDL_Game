@@ -59,6 +59,7 @@ class PipesPairObjPack : public IObjectPack
 {
 	public:
 	PipesPairObjPack();
+	PipesPairObjPack(int x, int y);
 
 	GameObject* MainObject;
 	SpriteComponent* TopSprite;
@@ -72,10 +73,68 @@ class PipesPairObjPack : public IObjectPack
 
 	virtual int Update(const double deltatime) override;
 
-	void LocatePipes();
+	void LocatePipes(int newX);
+	void LocatePipesAdditive(int addX);
+	void RandomizeY();
 	
 	private:
 	int pipeHeight;
 };
 
+struct ScoreBridge;
 
+class ScoreObjPack : public IObjectPack
+{
+	public:
+
+	ScoreObjPack(std::vector<PipesPairObjPack*> pairs);
+
+	GameObject* MainObject = nullptr;
+	ScoreBridge* Bridge = nullptr;
+	std::vector<PipesPairObjPack*> Pairs;
+	PipesPairObjPack* CurrentPipesPair = nullptr;
+	int currentPipesIndex = 0;
+	int ScorePoints;
+	SDL_Rect Hitbox;
+
+	CollisionComponent* ScoreCollision = nullptr;
+
+	// Inherited via IObjectPack
+	virtual void Load() override;
+
+	virtual int Update(const double deltatime) override;
+	// - - - -
+
+	PipesPairObjPack* GetNextPair();
+	void IncreaseScore();
+};
+
+class ScoreCounterObjPack : public IObjectPack
+{
+	public:
+
+	ScoreCounterObjPack();
+
+	GameObject* MainObject;
+	ScoreBridge* Bridge = nullptr;
+	std::vector<SDL_Texture*> NumbersTex = {};
+
+	SpriteComponent* SpriteUnit = nullptr;
+	SpriteComponent* SpriteTen = nullptr;
+	SpriteComponent* SpriteHundred = nullptr;
+
+	// Inherited via IObjectPack
+	virtual void Load() override;
+
+	virtual int Update(const double deltatime) override;
+	// - - - -
+
+	void ChangeNumber();
+};
+
+
+struct ScoreBridge
+{
+	ScoreObjPack* refScore;
+	ScoreCounterObjPack* refCounter;
+};

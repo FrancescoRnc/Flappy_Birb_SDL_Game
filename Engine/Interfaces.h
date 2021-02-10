@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 class IInitiable
 {
@@ -30,4 +31,15 @@ class IInputHandler : public IInitiable
     virtual int Initialize() = 0;
 
     virtual int Loop() = 0;
+};
+
+class IScene : public IUpdatable
+{
+    public:
+
+    virtual void Load(std::vector<IObjectPack*> objects) = 0;
+
+    virtual void Unload() = 0;
+
+    virtual int Update(const double deltatime) = 0;
 };

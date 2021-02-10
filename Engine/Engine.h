@@ -34,7 +34,6 @@ struct Engine : public IInitiable, public IUpdatable
 	int Loop();
 
 	virtual int Update(const double deltatime) override;
-	//void Draw();
 
 	void OnExitGame();
 

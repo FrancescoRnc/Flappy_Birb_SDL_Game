@@ -31,7 +31,8 @@ int KeyMouseInputHandler::Loop()
 			{
 				if (ev.key.keysym.sym == action.first)
 				{
-					action.second->Action();
+					//action.second->Action();
+					action.second->ActionStack.top()();
 				}
 			}
 		}

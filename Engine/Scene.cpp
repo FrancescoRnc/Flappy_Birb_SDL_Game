@@ -11,7 +11,7 @@ Scene::~Scene()
 
 }
 
-void Scene::LoadObjects()
+/*void Scene::LoadObjects()
 {
 	// Loading Gameobjects...
 
@@ -28,8 +28,6 @@ void Scene::LoadObjects()
 	GameObjectMap.insert({Pipes->MainObject->ObjectName, Pipes->MainObject});
 	GameObjectMap.insert({Player->MainObject->ObjectName, Player->MainObject});
 	GameObjectMap.insert({Player->GameOver->ObjectName, Player->GameOver});
-	
-	Pipes->LocatePipes();
 }
 void Scene::UpdateComponents(const double deltatime, std::map<std::string, std::vector<Component*>> cMap)
 {
@@ -117,22 +115,9 @@ void Scene::UpdateComponents(const double deltatime, std::map<std::string, std::
 		}
 	}
 
-	Player->Update(deltatime);
-}
-void Scene::DrawComponents(SDL_Renderer* renderer, std::vector<Component*> sprites)
-{
-	auto spriteComps = ComponentManager::Get()->ComponentMap["Sprite"];
-	for (auto comp : spriteComps)
-	{
-		if (comp->bActive)
-		{
-			auto c = reinterpret_cast<SpriteComponent*>(comp);
-			SDL_RenderCopyEx(renderer, c->Texture, &c->SrcRect, &c->DstRect, 
-							 *c->RotationAngleDegree, c->Point, c->FlipRule);
-			//std::cout << comp->Owner->ObjectName << " rotation: " << *c->RotationAngleDegree << std::endl;
-		}
-	}
-}
+	//Player->Update(deltatime);
+	Update(deltatime);
+}*/
 
 void Scene::StopMovingObjets(std::vector<MovableComponent*> components)
 {
@@ -140,4 +125,28 @@ void Scene::StopMovingObjets(std::vector<MovableComponent*> components)
 	{
 		comp->bActive = false;
 	}
+}
+
+void Scene::Load(std::vector<IObjectPack*> objects)
+{
+	Data.Objects = objects;
+	for (auto object : objects)
+	{
+		object->Load();
+	}
+}
+
+void Scene::Unload()
+{
+	Data.Objects.clear();
+	Data.GameObjectMap.clear();
+}
+
+int Scene::Update(const double deltatime)
+{
+	for (auto object :Data.Objects)
+	{
+		object->Update(deltatime);
+	}
+	return 0;
 }

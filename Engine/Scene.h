@@ -5,25 +5,49 @@
 #include "InputHandler.h"
 #include "ObjectPacks.h"
 
-struct Scene
+
+struct SceneData
+{
+	std::vector<IObjectPack*> Objects = {};
+	std::map<std::string, GameObject*> GameObjectMap = {};
+};
+
+
+struct Scene : public IScene
 {
 	Scene();
 	~Scene();
 
-	void LoadObjects();
-	void UpdateComponents(const double deltatime, std::map<std::string, std::vector<Component*>> cMap);
-	void DrawComponents(SDL_Renderer* renderer, std::vector<Component*> sprites);
+	//void LoadObjects();
+	//void UpdateComponents(const double deltatime, std::map<std::string, std::vector<Component*>> cMap);
 
-	private:
-
-	PlayerObjPack* Player = nullptr;
-	PipesPairObjPack* Pipes = nullptr;
-	BackgroundObjPack* Background = nullptr;
 
 	std::map<std::string, GameObject*> GameObjectMap;
 
+	SceneData Data = {};
+
 	void StopMovingObjets(std::vector<MovableComponent*> components);
 
-	//std::map<GameObject*, Component*> ComponentsBinded;
+
+	// Inherited via IScene
+	virtual void Load(std::vector<IObjectPack*> objects) override;
+
+	virtual void Unload() override;
+
+	virtual int Update(const double deltatime) override;
+	// - - - -
+
+	//std::map<GameObject*, Component*> BindedComponents;
+};
+
+
+
+struct GameState
+{
+	GameState();
+
+	GameState* Next;
+
+	void ChangeState();
 };
 

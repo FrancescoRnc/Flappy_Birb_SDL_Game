@@ -3,6 +3,7 @@
 #include <iostream>
 #include <functional>
 #include <map>
+#include <stack>
 #include "ComponentManager.h"
 #include "Interfaces.h"
 
@@ -38,6 +39,7 @@ struct InputContainer
 struct InputAction
 {
 	std::function<void()> Action = {};
+	std::stack<std::function<void()>> ActionStack;
 
 	void operator() ()
 	{
