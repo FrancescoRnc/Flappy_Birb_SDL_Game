@@ -6,9 +6,7 @@
 #include "Component.h"
 #include "Interfaces.h"
 
-//#define std::tuple<SpriteComponent, AnimatorComponent, MovableComponent, GravityComponent> Comps
 #define RULE_OF_FIVE(I) I(const I&) = delete; I(I&&) = delete; I operator= (const I&) = delete; I operator= (I&&) = delete; ~I();
-
 
 class ComponentManager : public IUpdatable
 {
@@ -17,36 +15,29 @@ class ComponentManager : public IUpdatable
 
 	RULE_OF_FIVE(ComponentManager);
 
+	// Contains every Component instanced
 	std::map<std::string, std::vector<Component*>> ComponentMap;
+
+	// Should be used to exclude some instanced Components from pipeline
+	// NOT USED YET
 	std::map<std::string, std::vector<Component*>> ComponentExclusionMap;
 
-	//Components ComponentDatabase;
-
-	static ComponentManager* Get()
-	{
-		return _instance;
-	}
-
-	template<typename T>
-	auto GetComponentByOwner(std::string type, GameObject* owner)
-	{
-		return [owner, ComponentMap]()
-		{
-			for (auto comp : ComponentMap[type])
-				if (comp->Owner == owner) return comp->Owner;
-		};
-	}
-
-	void AddComponent(std::string type, Component* _component)
+	void AddComponent(const std::string type, Component* _component)
 	{
 		ComponentMap[type].push_back(_component);
 	}
 
+	// Sorts Sprite Components by their Render Priority
 	void SortSprites();
 
 	// Inherited via IUpdatable
 	virtual int Update(const double deltatime) override;
 	// - - - -
+
+	static ComponentManager* Get()
+	{
+		return _instance;
+	}
 
 	private:
 	static ComponentManager* _instance;

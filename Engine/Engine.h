@@ -4,37 +4,27 @@
 #include "Scene.h"
 #include "Clock.h"
 #include "FileManager.h"
+#include "AudioSystem.h"
 #include "ComponentManager.h"
 #include "RenderManager.h"
 #include "InputHandler.h"
 
-//#define RULE_OF_FIVE(I) I(const I&) = delete; I(I&&) = delete; I operator= (const I&) = delete; I operator= (I&&) = delete; ~I();
 
 struct Engine : public IInitiable, public IUpdatable
 {
-	WindowRectInfo WindowInfo;
-
-	Engine(WindowRectInfo _info) : WindowInfo{_info} 
-	{
-		_instance = this;
-		fileMgr = new FileManager();
-		componentMgr = new ComponentManager();
-		renderMgr = new RenderManager({"Flappy Birb", 
-									  SDL_WINDOWPOS_CENTERED, 
-									  SDL_WINDOWPOS_CENTERED, 
-									  270, 480});
-		clock = new Clock();
-		current_scene = new Scene();
-	};
+	Engine();
 
 	RULE_OF_FIVE(Engine);
 
-
 	virtual int Initialize() override;
+
+	// This function is used for the main Engine Loop pipeline
 	int Loop();
 
+	// This function updates scene and managers' steps
 	virtual int Update(const double deltatime) override;
 
+	// This function is called before the program ends
 	void OnExitGame();
 
 	static Engine* Get()
@@ -43,14 +33,12 @@ struct Engine : public IInitiable, public IUpdatable
 	}
 
 	FileManager* fileMgr = nullptr;
+	AudioSystem* audioSys = nullptr;
 	ComponentManager* componentMgr = nullptr;
 	RenderManager* renderMgr = nullptr;
-	IInputHandler* InputHandler = nullptr;
 	KeyMouseInputHandler* KeyboardHandler = nullptr;
-	JoystickInputHandler* JoystickHandler = nullptr;
 
 	private:
-	int init_result = 0;
 	Clock* clock = nullptr;
 	Scene* current_scene = nullptr;
 

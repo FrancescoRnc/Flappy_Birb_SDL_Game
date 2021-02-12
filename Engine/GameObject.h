@@ -11,17 +11,14 @@ class GameObject
 	GameObject();
 	~GameObject();
 
-	GameObject(std::string name) : ObjectName{name}
-	{
-		PosX = 0;
-		PosY = 0;
-	}
+	GameObject(std::string name) : ObjectName{name} { }
+
+	// Position in screen coordinates.
+	// These are pointers because you can use them pointing to other variables, such Rect.x/y ecc.
+	int* PosX = 0;
+	int* PosY = 0;
 
 	std::string ObjectName;
-
-	int* PosX;
-	int* PosY;
-
 	std::map<std::string, Component*> Components;
 
 	template<typename T>

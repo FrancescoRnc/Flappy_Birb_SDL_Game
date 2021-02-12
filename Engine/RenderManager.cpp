@@ -25,16 +25,6 @@ RenderManager::~RenderManager()
 
 int RenderManager::Initialize()
 {
-	//std::cout << "Initialization..." << std::endl;
-	//if (SDL_Init(SDL_INIT_VIDEO /*| 
-	//			 SDL_INIT_AUDIO | 
-	//			 SDL_INIT_GAMECONTROLLER | 
-	//			 SDL_INIT_TIMER*/))
-	//{
-	//	std::cout << "Error during Initialization" << std::endl;
-	//	return 1;
-	//}
-
 	std::cout << "Creating Window..." << std::endl;
 	Window = SDL_CreateWindow(WindowInfo.Title,
 							  WindowInfo.ScreenX,
@@ -81,7 +71,6 @@ int RenderManager::Draw()
 									 comp->Point,
 									 comp->FlipRule))
 				{
-					//SDL_RenderPresent(Renderer);
 					return 1;
 				}
 		}
@@ -94,10 +83,5 @@ int RenderManager::Draw()
 
 void RenderManager::RegisterSprite(RenderLayer layer, SpriteComponent* sprite)
 {
-	//auto buffer = SpriteBuffer[layer];
-	//if (buffer == nullptr)
-	//{
-	//	SpriteBuffer;
-	//}
 	SpriteBuffer[layer].push_back(sprite);
 }

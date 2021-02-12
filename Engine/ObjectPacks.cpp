@@ -36,7 +36,7 @@ void PlayerObjPack::Load()
 	Sprite->RenderPriority = 20;
 	Animator->rMainSprite = Sprite;
 	Animator->bLoop = true;
-	Animator->frame_max_time = 1. / 15.;
+	Animator->frame_max_time = 1. / 7.5;
 	Movement->Rects = {&Sprite->DstRect};
 	Rotator->MinAngle = -90; Rotator->MaxAngle = 90.;
 	Sprite->RotationAngleDegree = Rotator->Rotation;
@@ -50,7 +50,7 @@ void PlayerObjPack::Load()
 	Collision->OnCollision = [this](SDL_Rect* other)
 	{
 		OnGameOver();
-		Flap->DoFlap->Action();
+		Flap->DoFlap->ActionStack.top();
 		GameOverSprite->bActive = true;
 		Collision->bActive = false;
 		Flap->bActive = false;
@@ -60,22 +60,20 @@ void PlayerObjPack::Load()
 	Flap->Gravity = Gravity; 
 	Flap->FlapForce = 300.;
 	Flap->KeyCode = SDLK_SPACE;
-	Flap->DoFlap->Action = [this]()
+	Flap->Func = [this]()
 	{
 		Gravity->bActive = true;
 		Movement->VMoveSpeed = -Flap->FlapForce;
-		//std::cout << "Flap Flap!" << std::endl;
+		Mix_PlayChannel(-1, AudioSystem::Get()->GetTrack("wing"), 0);
+		std::cout << "Flap Flap!" << std::endl;
 	};
-	Flap->DoFlap->ActionStack.push([this]()
-	{
-		Gravity->bActive = true;
-		Movement->VMoveSpeed = -Flap->FlapForce;
-		//std::cout << "Flap Flap!" << std::endl;
-	});
+	Flap->DoFlap->ActionStack.push(Flap->Func);
 
 	GameOverSprite->bActive = false; GameOverSprite->RenderPriority = 100;
 	OnGameOver = [this]()
 	{
+		Mix_PlayChannel(-1, AudioSystem::Get()->GetTrack("hit"), 0);
+		Flap->Func();
 		auto components = ComponentManager::Get()->ComponentMap["Movable"];
 		for (auto c : components) c->bActive = false;
 		Movement->bActive = true;
@@ -133,10 +131,9 @@ void BackgroundObjPack::Load()
 	BGSprite->RenderPriority = 1;
 	BaseSprite->RenderPriority = 10;
 	Movement->Rects = {
-		//&BGSprite->DstRect, 
 		&BaseSprite->DstRect, 
 	};
-	Movement->HMoveSpeed = -60.;
+	Movement->HMoveSpeed = -150.;
 	Collision->Rect = &BaseSprite->DstRect;
 	Collision->CollisionPin = 0x00000100;
 	Collision->CollisionBitmask = 0x00000001;
@@ -145,10 +142,9 @@ void BackgroundObjPack::Load()
 		//std::cout << "Base Collision" << std::endl;
 	};
 	BGRelocator->Rects = {
-		//&BGSprite->DstRect,
 		&BaseSprite->DstRect,
 	};
-	BGRelocator->LimitX = -(BGSprite->DstRect.w / 2);
+	BGRelocator->LimitX = -(BaseSprite->DstRect.w / 2);
 	BGRelocator->CheckPosition = [this](SDL_Rect* outRect)
 	{ 
 		return outRect->x < BGRelocator->LimitX; 
@@ -224,7 +220,7 @@ void PipesPairObjPack::Load()
 		Movement->bActive = false;
 		TopCollision->bActive = false;
 		BottomCollision->bActive = false;
-		//std::cout << "Pipe Collision" << std::endl;
+		std::cout << "Pipe Collision" << std::endl;
 	};
 	TopCollision->OnCollision = onCollision;
 
@@ -322,7 +318,7 @@ void ScoreObjPack::Load()
 
 int ScoreObjPack::Update(const double deltatime)
 {
-	Hitbox.x = CurrentPipesPair->TopSprite->DstRect.x + 10;
+	Hitbox.x = CurrentPipesPair->TopSprite->DstRect.x + 30;
 	return 0;
 }
 
@@ -334,9 +330,9 @@ PipesPairObjPack* ScoreObjPack::GetNextPair()
 
 void ScoreObjPack::IncreaseScore()
 {
+    Mix_PlayChannel(-1, AudioSystem::Get()->GetTrack("point"), 0);
 	ScorePoints += 1;
 	Bridge->refCounter->ChangeNumber();
-	//std::cout << "Score: " << ScorePoints << std::endl;
 }
 
 

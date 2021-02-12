@@ -4,22 +4,18 @@
 #include "InputHandler.h"
 #include "Interfaces.h"
 #include "RenderManager.h"
+#include "AudioSystem.h"
 
-/*class IObjectPack
-{
-	public:
 
-	virtual void Load() = 0;
-
-	virtual void Update(const double deltatime) = 0;
-};*/
+// Use and create these classes as true Gameplay objects. 
+// These contain A Gameobject (one or more), some components,
+// and other objects and behaviours for your Gameplay Design
 
 class PlayerObjPack : public IObjectPack
 {
 	public:
 	PlayerObjPack();
 
-	GameObject* MainObject;
 	SpriteComponent* Sprite;
 	AnimatorComponent* Animator;
 	MovableComponent* Movement;
@@ -43,7 +39,6 @@ class BackgroundObjPack : public IObjectPack
 	public:
 	BackgroundObjPack();
 
-	GameObject* MainObject;
 	SpriteComponent* BGSprite;
 	SpriteComponent* BaseSprite;
 	MovableComponent* Movement;
@@ -61,7 +56,6 @@ class PipesPairObjPack : public IObjectPack
 	PipesPairObjPack();
 	PipesPairObjPack(int x, int y);
 
-	GameObject* MainObject;
 	SpriteComponent* TopSprite;
 	SpriteComponent* BottomSprite;
 	MovableComponent* Movement;
@@ -89,7 +83,6 @@ class ScoreObjPack : public IObjectPack
 
 	ScoreObjPack(std::vector<PipesPairObjPack*> pairs);
 
-	GameObject* MainObject = nullptr;
 	ScoreBridge* Bridge = nullptr;
 	std::vector<PipesPairObjPack*> Pairs;
 	PipesPairObjPack* CurrentPipesPair = nullptr;
@@ -115,7 +108,6 @@ class ScoreCounterObjPack : public IObjectPack
 
 	ScoreCounterObjPack();
 
-	GameObject* MainObject;
 	ScoreBridge* Bridge = nullptr;
 	std::vector<SDL_Texture*> NumbersTex = {};
 
@@ -135,6 +127,13 @@ class ScoreCounterObjPack : public IObjectPack
 
 struct ScoreBridge
 {
+	ScoreBridge(ScoreObjPack* score, ScoreCounterObjPack* counter) :
+	refScore{score}, refCounter{counter} 
+	{
+		refScore->Bridge = this;
+		refCounter->Bridge = this;
+	}
+
 	ScoreObjPack* refScore;
 	ScoreCounterObjPack* refCounter;
 };

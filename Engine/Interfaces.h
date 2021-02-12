@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 
+// Here are collected all the Interfaces
+
 class IInitiable
 {
     public:
@@ -15,9 +17,13 @@ class IUpdatable
     virtual int Update(const double deltatime) = 0;
 };
 
+class GameObject;
+
 class IObjectPack : public IUpdatable
 {
     public:
+
+    GameObject* MainObject;
 
     virtual void Load() = 0;
 

@@ -28,30 +28,14 @@ ComponentManager::~ComponentManager()
 void ComponentManager::SortSprites()
 {
 	auto sprites = ComponentMap["Sprite"];
-
-	//std::cout << "Rendering Order before: " << std::endl;
-	//for (auto comp : sprites)
-	//{
-	//	auto c = reinterpret_cast<SpriteComponent*>(comp);
-	//	std::cout << c->RenderPriority << std::endl;
-	//
-	//}
-
 	auto sortingLambda = [](Component* a, Component* b)
 	{
 		auto as = reinterpret_cast<SpriteComponent*>(a);
 		auto bs = reinterpret_cast<SpriteComponent*>(b);
 		return as->RenderPriority < bs->RenderPriority;
 	};
-	std::sort(sprites.begin(), sprites.end(), sortingLambda);
 
-	//std::cout << "Rendering Order after: " << std::endl;
-	//for (auto comp : sprites)
-	//{
-	//	auto c = reinterpret_cast<SpriteComponent*>(comp);
-	//	std::cout << c->RenderPriority << std::endl;
-	//
-	//}
+	std::sort(sprites.begin(), sprites.end(), sortingLambda);
 
 	ComponentMap["Sprite"] = sprites;
 }
@@ -65,14 +49,12 @@ int ComponentManager::Update(const double deltatime)
 		if (comp->bActive)
 		{
 			auto c = reinterpret_cast<AnimatorComponent*>(comp);
-			c->frame_current_time += deltatime;
-			//std::cout << "Time: " << c->frame_current_time << std::endl;
+			c->frame_current_time += deltatime * c->SpeedRate;
 			if (c->frame_current_time>=c->frame_max_time)
 			{
 				c->frame_current_time = 0;
 				c->current_frame = (c->current_frame+1)%c->frames;
 				c->rMainSprite->Texture = c->textures[c->current_frame];
-				//std::cout << "Current Frame: " << c->current_frame << std::endl;
 			}
 		}
 	}
@@ -105,6 +87,7 @@ int ComponentManager::Update(const double deltatime)
 		}
 	}
 
+	// Object Relocators
 	auto relocatorComps = ComponentMap["Relocator"];
 	for (auto comp:relocatorComps)
 	{
@@ -135,14 +118,14 @@ int ComponentManager::Update(const double deltatime)
 					{
 						c->OnCollision(o->Rect);
 						//o->OnCollision(c->Rect);
-						//std::cout<<"Collision between "<<c->Owner->ObjectName<<" and "<<o->Owner->ObjectName<<std::endl;
+						//std::cout << "Collision between  " 
+						//	<< c->Owner->ObjectName << " and " 
+						//	<< o->Owner->ObjectName << std::endl;
 					}
 				}
 			}
 		}
 	}
-
-	
 
 	return 0;
 }

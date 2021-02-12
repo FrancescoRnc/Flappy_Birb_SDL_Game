@@ -1,10 +1,15 @@
 #pragma once
 #include <SDL.h>
+#include <SDL_mixer.h>
 #include <functional>
 #include <stdint.h>
+#include <map>
 
 class GameObject;
 struct InputAction;
+
+// This header contains EVERY Component to be used for your game.
+// You can to create every Component you want and how you want
 
 struct Component
 {
@@ -50,7 +55,7 @@ struct AnimatorComponent : public Component
 
 	SpriteComponent* rMainSprite = nullptr;
 	std::vector<SDL_Texture*> textures;
-	float SpeedRate = 0;
+	double SpeedRate = 1.;
 	size_t frames = 1;
 	bool bLoop = false;
 
@@ -70,7 +75,6 @@ struct RelocatableComponent : public Component
 
 struct MovableComponent : public Component
 {
-	//SDL_Rect* Rect = nullptr;
 	std::vector<SDL_Rect*> Rects;
 	double HMoveSpeed = 0;
 	double VMoveSpeed = 0;
@@ -100,18 +104,13 @@ struct GravityComponent : public Component
 
 	void GravityStep(const double deltatime)
 	{
-		//if (bActive)
-		//{
-			refMovable->VMoveSpeed += GravityForce * deltatime;
-		//}
-		//else refMovable->VMoveSpeed = 0;
+		refMovable->VMoveSpeed += GravityForce * deltatime;
 	}
 };
 
 struct CollisionComponent : public Component
 {
 	SDL_Rect* Rect = nullptr;
-	//virtual void Intersection(SDL_Rect *other) = 0;
 	std::function<void(SDL_Rect*)> OnCollision;
 
 	unsigned int CollisionPin = 0;
@@ -120,10 +119,21 @@ struct CollisionComponent : public Component
 
 struct FlapComponent : public Component
 {
-	//FlapComponent() { DoFlap = new InputAction(); }
-
 	GravityComponent* Gravity = nullptr;
 	double FlapForce = 0;
 	SDL_KeyCode KeyCode;
+	std::function<void()> Func;
 	InputAction* DoFlap = nullptr;
+};
+
+struct AudioComponent : public Component
+{
+	std::map<std::string, Mix_Chunk*> Tracks = {};
+	int SelectedChannel = -1;
+	int LoopTimes = 1;
+
+	void Play(std::string name)
+	{
+		Mix_PlayChannel(SelectedChannel, Tracks[name], LoopTimes);
+	}
 };

@@ -7,7 +7,7 @@
 #include "ComponentManager.h"
 #include "Interfaces.h"
 
-
+// These loads and behave for Keyboard use
 class KeyMouseInputHandler : public IInputHandler
 {
 	public:
@@ -19,34 +19,28 @@ class KeyMouseInputHandler : public IInputHandler
 	virtual int Loop() override;
 };
 
+// These loads and behave for Keyboard use
 class JoystickInputHandler : public IInputHandler
 {
 	public:
-
-	//std::map<, std::function<void()>> InputMap;
 
 	virtual int Initialize() override;
 
 	virtual int Loop() override;
 };
 
-struct InputContainer
-{
-	virtual void Insert() = 0;
-};
-
-
+// To use for any kind of button
 struct InputAction
 {
-	std::function<void()> Action = {};
 	std::stack<std::function<void()>> ActionStack;
 
-	void operator() ()
+	void* operator() ()
 	{
-		Action();
+		ActionStack.top();
 	}
 };
 
+// To use for Joypad analog sticks andf other Axis-able Input
 struct InputAxis
 {
 	std::function<void(float)> Action;

@@ -5,6 +5,8 @@ int KeyMouseInputHandler::Initialize()
 {
 	std::cout << "Initializing Keyboard & Mouse Input..." << std::endl;
 
+	// TODO
+
 	std::cout << "Initialization completed!" << std::endl << std::endl;
 
 	return 0;
@@ -21,22 +23,14 @@ int KeyMouseInputHandler::Loop()
 		{
 			if (ev.key.keysym.sym == SDLK_ESCAPE)
 				return 1;
-
-			/*if (ev.key.keysym.sym == SDLK_SPACE)
-			{
-				auto c = reinterpret_cast<FlapComponent*>(ComponentManager::Get()->ComponentMap["Flap"][0]);
-				c->DoFlap->Action();
-			}*/
 			for (auto action : InputMap)
 			{
 				if (ev.key.keysym.sym == action.first)
 				{
-					//action.second->Action();
 					action.second->ActionStack.top()();
 				}
 			}
 		}
-
 	}
 	return 0;
 }
@@ -46,6 +40,8 @@ int KeyMouseInputHandler::Loop()
 int JoystickInputHandler::Initialize()
 {
 	std::cout << "Initializing Joystick Input..." << std::endl;
+
+	// TODO
 
 	std::cout << "Initialization completed!" << std::endl << std::endl;
 
@@ -59,6 +55,8 @@ int JoystickInputHandler::Loop()
 	{
 		if (ev.type == SDL_QUIT)
 			return 1;
+
+		// TODO
 	}
 	return 0;
 }

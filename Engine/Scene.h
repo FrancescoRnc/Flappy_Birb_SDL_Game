@@ -5,7 +5,7 @@
 #include "InputHandler.h"
 #include "ObjectPacks.h"
 
-
+// This struct contains data that the scene uses for itself
 struct SceneData
 {
 	std::vector<IObjectPack*> Objects = {};
@@ -16,18 +16,10 @@ struct SceneData
 struct Scene : public IScene
 {
 	Scene();
-	~Scene();
 
-	//void LoadObjects();
-	//void UpdateComponents(const double deltatime, std::map<std::string, std::vector<Component*>> cMap);
-
-
-	std::map<std::string, GameObject*> GameObjectMap;
+	RULE_OF_FIVE(Scene);
 
 	SceneData Data = {};
-
-	void StopMovingObjets(std::vector<MovableComponent*> components);
-
 
 	// Inherited via IScene
 	virtual void Load(std::vector<IObjectPack*> objects) override;
@@ -36,18 +28,5 @@ struct Scene : public IScene
 
 	virtual int Update(const double deltatime) override;
 	// - - - -
-
-	//std::map<GameObject*, Component*> BindedComponents;
-};
-
-
-
-struct GameState
-{
-	GameState();
-
-	GameState* Next;
-
-	void ChangeState();
 };
 
