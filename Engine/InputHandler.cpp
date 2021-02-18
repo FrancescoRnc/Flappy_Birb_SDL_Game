@@ -27,7 +27,10 @@ int KeyMouseInputHandler::Loop()
 			{
 				if (ev.key.keysym.sym == action.first)
 				{
-					action.second->ActionStack.top()();
+					if (!action.second->ActionStack.empty())
+						action.second->ActionStack.top()();
+					//else
+					//	std::cout<<"No Input Action"<<std::endl;
 				}
 			}
 		}

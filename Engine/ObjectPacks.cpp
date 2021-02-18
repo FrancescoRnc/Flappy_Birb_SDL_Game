@@ -1,7 +1,6 @@
 #include "ObjectPacks.h"
 #include <cmath>
 
-
 PlayerObjPack::PlayerObjPack()
 {
 	MainObject = new GameObject("Player");
@@ -14,7 +13,7 @@ PlayerObjPack::PlayerObjPack()
 									  FileManager::Get()->
 									  GetTexture("redbird-midflap")});
 	Sprite = new SpriteComponent(nullptr, Animator->textures[0],
-								 {}, {70, 200}, nullptr, SDL_FLIP_NONE);
+								 {}, {}, nullptr, SDL_FLIP_NONE);
 	Movement = new MovableComponent();
 	Rotator = new RotatorComponent();
 	Gravity = new GravityComponent();
@@ -26,7 +25,6 @@ PlayerObjPack::PlayerObjPack()
 	GameOverSprite = new SpriteComponent(nullptr, FileManager::Get()->
 										 GetTexture("gameover"),
 										 {}, {39, 100}, nullptr, SDL_FLIP_NONE);
-
 }
 
 void PlayerObjPack::Load()
@@ -47,15 +45,17 @@ void PlayerObjPack::Load()
 	Collision->Rect = &Sprite->DstRect;
 	Collision->CollisionPin = 0x00000001;
 	Collision->CollisionBitmask = 0x00000110;
-	Collision->OnCollision = [this](SDL_Rect* other)
-	{
-		OnGameOver();
-		Flap->DoFlap->ActionStack.top();
-		GameOverSprite->bActive = true;
-		Collision->bActive = false;
-		Flap->bActive = false;
-		//std::cout << "Player Collision" << std::endl;
-	};
+	//Collision->OnCollision = [this](SDL_Rect* other)
+	//{
+	//	// FINISH GAME OVER 
+	//
+	//	
+	//	Flap->DoFlap->ActionStack.top();
+	//	GameOverSprite->bActive = true;
+	//	Collision->bActive = false;
+	//	Flap->bActive = false;
+	//	//std::cout << "Player Collision" << std::endl;
+	//};
 
 	Flap->Gravity = Gravity; 
 	Flap->FlapForce = 300.;
@@ -65,19 +65,20 @@ void PlayerObjPack::Load()
 		Gravity->bActive = true;
 		Movement->VMoveSpeed = -Flap->FlapForce;
 		Mix_PlayChannel(-1, AudioSystem::Get()->GetTrack("wing"), 0);
-		std::cout << "Flap Flap!" << std::endl;
+		//std::cout << "Flap Flap!" << std::endl;
 	};
+	//Flap->DoFlap->ActionStack.push({});
 	Flap->DoFlap->ActionStack.push(Flap->Func);
 
 	GameOverSprite->bActive = false; GameOverSprite->RenderPriority = 100;
-	OnGameOver = [this]()
-	{
-		Mix_PlayChannel(-1, AudioSystem::Get()->GetTrack("hit"), 0);
-		Flap->Func();
-		auto components = ComponentManager::Get()->ComponentMap["Movable"];
-		for (auto c : components) c->bActive = false;
-		Movement->bActive = true;
-	};
+	//OnGameOver = [this]()
+	//{
+	//	Mix_PlayChannel(-1, AudioSystem::Get()->GetTrack("hit"), 0);
+	//	Flap->Func();
+	//	auto components = ComponentManager::Get()->ComponentMap["Movable"];
+	//	for (auto c : components) c->bActive = false;
+	//	Movement->bActive = true;
+	//};
 
 	MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite", Sprite);
 	auto rm = RenderManager::Get();
@@ -96,7 +97,7 @@ int PlayerObjPack::Update(const double deltatime)
 {
 	if (Movement->VMoveSpeed > 0)
 	{
-		if (*Rotator->Rotation <= Rotator->MaxAngle)
+ 		if (*Rotator->Rotation <= Rotator->MaxAngle)
 			*Rotator->Rotation += 180. * deltatime;
 	}
 	else if (Movement->VMoveSpeed == 0) *Rotator->Rotation = 0;
@@ -109,6 +110,12 @@ int PlayerObjPack::Update(const double deltatime)
 		Movement->bActive = false;
 	}
 	return 0;
+}
+
+void PlayerObjPack::Locate(int x, int y)
+{
+	*MainObject->PosX = x;
+	*MainObject->PosY = y;
 }
 
 
@@ -289,6 +296,13 @@ void PipesPairObjPack::RandomizeY()
 	TopSprite->DstRect.y = newTY;
 }
 
+void PipesPairObjPack::Locate(int x, int y)
+{
+	TopSprite->DstRect.x = BottomSprite->DstRect.x = x;
+	TopSprite->DstRect.y = BottomSprite->DstRect.y = y;	
+	RandomizeY();
+}
+
 
 ScoreObjPack::ScoreObjPack(std::vector<PipesPairObjPack*> pairs)
 {
@@ -308,7 +322,6 @@ void ScoreObjPack::Load()
 	ScoreCollision->CollisionBitmask = (uint8_t)0x00000001;
 	ScoreCollision->OnCollision = [this](SDL_Rect* other)
 	{
-		//ScoreSystem::Get()->Increase();
 		IncreaseScore();
 		CurrentPipesPair = GetNextPair();
 	};
@@ -333,6 +346,14 @@ void ScoreObjPack::IncreaseScore()
     Mix_PlayChannel(-1, AudioSystem::Get()->GetTrack("point"), 0);
 	ScorePoints += 1;
 	Bridge->refCounter->ChangeNumber();
+}
+
+void ScoreObjPack::ResetScore()
+{
+	ScorePoints = 0;
+	Bridge->refCounter->SpriteUnit->Texture = Bridge->refCounter->NumbersTex[0];
+	Bridge->refCounter->SpriteTen->Texture = Bridge->refCounter->NumbersTex[0];
+	Bridge->refCounter->SpriteHundred->Texture = Bridge->refCounter->NumbersTex[0];
 }
 
 

@@ -11,7 +11,7 @@
 // These contain A Gameobject (one or more), some components,
 // and other objects and behaviours for your Gameplay Design
 
-class PlayerObjPack : public IObjectPack
+class PlayerObjPack : public IObjectPack, public ILocatable
 {
 	public:
 	PlayerObjPack();
@@ -32,6 +32,9 @@ class PlayerObjPack : public IObjectPack
 	virtual void Load() override;
 
 	virtual int Update(const double deltatime) override;
+
+	// Inherited via ILocatable
+	virtual void Locate(int x, int y) override;
 };
 
 class BackgroundObjPack : public IObjectPack
@@ -50,7 +53,7 @@ class BackgroundObjPack : public IObjectPack
 	virtual int Update(const double deltatime) override;
 };
 
-class PipesPairObjPack : public IObjectPack
+class PipesPairObjPack : public IObjectPack, public ILocatable
 {
 	public:
 	PipesPairObjPack();
@@ -71,8 +74,12 @@ class PipesPairObjPack : public IObjectPack
 	void LocatePipesAdditive(int addX);
 	void RandomizeY();
 	
+	// Inherited via ILocatable
+	virtual void Locate(int x, int y) override;
+
 	private:
 	int pipeHeight;
+
 };
 
 struct ScoreBridge;
@@ -100,6 +107,7 @@ class ScoreObjPack : public IObjectPack
 
 	PipesPairObjPack* GetNextPair();
 	void IncreaseScore();
+	void ResetScore();
 };
 
 class ScoreCounterObjPack : public IObjectPack

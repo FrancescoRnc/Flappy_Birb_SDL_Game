@@ -34,7 +34,7 @@ struct InputAction
 {
 	std::stack<std::function<void()>> ActionStack;
 
-	void* operator() ()
+	void operator() ()
 	{
 		ActionStack.top();
 	}

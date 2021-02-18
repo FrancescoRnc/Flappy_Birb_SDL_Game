@@ -30,6 +30,13 @@ class IObjectPack : public IUpdatable
     virtual int Update(const double deltatime) = 0;
 };
 
+class ILocatable
+{
+    public: 
+
+    virtual void Locate(int x, int y) = 0;
+};
+
 class IInputHandler : public IInitiable
 {
     public:

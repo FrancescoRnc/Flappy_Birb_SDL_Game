@@ -573,6 +573,9 @@
     <ClInclude Include="SDL2\include\SDL_mixer.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\GameEditor.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SDL2\lib\x64\SDL2.dll" />
@@ -636,6 +639,9 @@
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="Engine\AudioSystem.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\GameEditor.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>

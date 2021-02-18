@@ -8,6 +8,7 @@
 #include "ComponentManager.h"
 #include "RenderManager.h"
 #include "InputHandler.h"
+#include "GameEditor.h"
 
 
 struct Engine : public IInitiable, public IUpdatable
@@ -24,6 +25,8 @@ struct Engine : public IInitiable, public IUpdatable
 	// This function updates scene and managers' steps
 	virtual int Update(const double deltatime) override;
 
+	void OnStartGame();
+
 	// This function is called before the program ends
 	void OnExitGame();
 
@@ -37,6 +40,7 @@ struct Engine : public IInitiable, public IUpdatable
 	ComponentManager* componentMgr = nullptr;
 	RenderManager* renderMgr = nullptr;
 	KeyMouseInputHandler* KeyboardHandler = nullptr;
+	GameEditor* gameEditor;
 
 	private:
 	Clock* clock = nullptr;
