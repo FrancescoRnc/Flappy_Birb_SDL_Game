@@ -576,6 +576,9 @@
     <ClInclude Include="Engine\GameEditor.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\CustomEventSystem.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SDL2\lib\x64\SDL2.dll" />
@@ -642,6 +645,9 @@
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="Engine\GameEditor.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\CustomEventSystem.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>

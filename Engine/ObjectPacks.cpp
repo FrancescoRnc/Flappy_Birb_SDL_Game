@@ -335,6 +335,12 @@ int ScoreObjPack::Update(const double deltatime)
 	return 0;
 }
 
+void ScoreObjPack::StartwithFirstPair()
+{
+	currentPipesIndex = 0;
+	CurrentPipesPair = Pairs[currentPipesIndex];
+}
+
 PipesPairObjPack* ScoreObjPack::GetNextPair()
 {
 	currentPipesIndex = (currentPipesIndex + 1) % Pairs.size();

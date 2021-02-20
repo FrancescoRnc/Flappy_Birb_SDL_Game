@@ -153,6 +153,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\CustomEventSystem.h" />
     <ClInclude Include="Engine\AudioSystem.h" />
     <ClInclude Include="Engine\ComponentManager.h" />
     <ClInclude Include="Engine\Component.h" />
@@ -369,6 +370,7 @@
     <Library Include="SDL2\lib\x64\SDL2_mixer.lib" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\CustomEventSystem.cpp" />
     <ClCompile Include="Engine\AudioSystem.cpp" />
     <ClCompile Include="Engine\ComponentManager.cpp" />
     <ClCompile Include="Engine\Component.cpp" />

@@ -10,8 +10,8 @@ Engine::Engine()
 	audioSys = new AudioSystem();
 	componentMgr = new ComponentManager();
 	renderMgr = new RenderManager({"Flappy Birb",
-								  SDL_WINDOWPOS_CENTERED,
-								  SDL_WINDOWPOS_CENTERED,
+								  700,//SDL_WINDOWPOS_CENTERED,
+								  300,//SDL_WINDOWPOS_CENTERED,
 								  270, 480});
 	gameEditor = new GameEditor();
 	gameEditor->refEngine = this;
@@ -130,12 +130,10 @@ int GameEditor::GameStart()
 	background->Movement->bActive = true;
 
 	score->ResetScore();
+	score->StartwithFirstPair();
 
 	player->GameOverSprite->bActive = false;
 
-	//auto flap = player->Flap;
-	//engine->KeyboardHandler->InputMap.insert({flap->KeyCode, flap->DoFlap});
- 	//refEngine->KeyboardHandler->InputMap[flap->KeyCode] = flap->DoFlap;
 	auto OneShotFunction = [this]()
 	{
 		player->Gravity->bActive = true;

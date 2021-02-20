@@ -105,6 +105,7 @@ class ScoreObjPack : public IObjectPack
 	virtual int Update(const double deltatime) override;
 	// - - - -
 
+	void StartwithFirstPair();
 	PipesPairObjPack* GetNextPair();
 	void IncreaseScore();
 	void ResetScore();
