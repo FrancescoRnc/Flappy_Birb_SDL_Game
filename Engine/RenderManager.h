@@ -20,10 +20,10 @@ enum class RenderLayer { Background = 1,
 struct WindowRectInfo
 {
 	const char* Title;
-	int ScreenX;
-	int ScreenY;
 	int Width;
 	int Height;
+	int ScreenX;
+	int ScreenY;
 };
 
 // These class handles every Render Object and behaviour for itself

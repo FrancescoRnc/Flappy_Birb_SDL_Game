@@ -20,7 +20,7 @@ void Scene::Load(std::vector<IObjectPack*> objects)
 	Data.Objects = objects;
 	for (auto object : objects)
 	{
-		object->Load();
+		object->Load(ComponentManager::Get());
 		Data.GameObjectMap.insert({object->MainObject->ObjectName, object->MainObject});
 	}
 

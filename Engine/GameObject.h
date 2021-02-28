@@ -21,13 +21,15 @@ class GameObject
 	std::string ObjectName;
 	std::map<std::string, Component*> Components;
 
+	int Entity = -1;
+	static int Entities;
+
 	template<typename T>
 	auto BindComponent(std::string type, std::string name, T* component)
 	{
 		Components.insert(std::pair<std::string, T*>(name, component));
 		ComponentManager::Get()->AddComponent(type, component);
-		component->Owner = this;
+		//component->Owner = this;
 		return component;
 	}
 };
-

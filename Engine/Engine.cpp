@@ -7,25 +7,28 @@ Engine::Engine()
 {
 	_instance = this;
 	fileMgr = new FileManager();
+	renderMgr = new RenderManager({"Flappy Birb",
+								  270, 480, // Screen size here
+								  SDL_WINDOWPOS_CENTERED,
+								  SDL_WINDOWPOS_CENTERED});
 	audioSys = new AudioSystem();
 	componentMgr = new ComponentManager();
-	renderMgr = new RenderManager({"Flappy Birb",
-								  700,//SDL_WINDOWPOS_CENTERED,
-								  300,//SDL_WINDOWPOS_CENTERED,
-								  270, 480});
 	gameEditor = new GameEditor();
 	gameEditor->refEngine = this;
-	clock = new Clock();
 	current_scene = new Scene();
+	clock = new Clock();
 }
 
 Engine::~Engine()
 {
 	std::cout << "Destroying everything..." << std::endl;
-	delete(fileMgr);
-	delete(audioSys);
+	delete(clock);  
+	delete(current_scene);
+	delete(gameEditor);
 	delete(componentMgr);
+	delete(audioSys);
 	delete(renderMgr);
+	delete(fileMgr);
 }
 
 int Engine::Initialize()
@@ -166,10 +169,12 @@ void GameEditor::OnGameOver()
 
 void GameEditor::StopMovingObjects()
 {
-	auto moves = ComponentManager::Get()->ComponentMap["Movable"];
+	//auto moves = ComponentManager::Get()->ComponentMap["Movable"];
+	auto moves = ComponentManager::Get()->MovableContainer.components;
 
-	for (auto comp:moves)
+	for (auto entity:moves)
 	{
-		comp->bActive = false;
+		for (auto comp : entity.second)
+			comp->bActive = false;
 	}
 }

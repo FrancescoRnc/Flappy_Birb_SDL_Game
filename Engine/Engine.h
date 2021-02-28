@@ -40,7 +40,7 @@ struct Engine : public IInitiable, public IUpdatable
 	ComponentManager* componentMgr = nullptr;
 	RenderManager* renderMgr = nullptr;
 	KeyMouseInputHandler* KeyboardHandler = nullptr;
-	GameEditor* gameEditor;
+	GameEditor* gameEditor = nullptr;
 
 	private:
 	Clock* clock = nullptr;

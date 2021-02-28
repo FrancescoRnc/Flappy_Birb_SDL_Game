@@ -13,14 +13,22 @@ struct InputAction;
 
 struct Component
 {
+	Component() {}
+	Component(GameObject* owner) : Owner{owner} {}
+
+	int EntityOwner = -1;
 	GameObject* Owner = nullptr;
 	bool bActive = true;
 };
 
 struct SpriteComponent : public Component
 {
-	SpriteComponent() {}
-	SpriteComponent(SDL_Surface* _surface, SDL_Texture* _texture,
+	SpriteComponent(GameObject* owner) 
+	{
+		Owner = owner;
+	}
+	SpriteComponent(GameObject* owner, 
+					SDL_Surface* _surface, SDL_Texture* _texture,
 					SDL_Rect _srcRect, SDL_Rect _dstRect,
 					SDL_Point* _point, SDL_RendererFlip _flipRule) :
 		Surface{_surface}, Texture{_texture}, 
@@ -33,7 +41,7 @@ struct SpriteComponent : public Component
 		DstRect.h = SrcRect.h = h;
 		RotationAngleDegree = new double{0};
 
-		
+		Owner = owner;
 	};
 
 	SDL_Surface* Surface = nullptr;
@@ -48,9 +56,11 @@ struct SpriteComponent : public Component
 
 struct AnimatorComponent : public Component
 {
-	AnimatorComponent(std::vector<SDL_Texture*> _txs) : textures{_txs}
+	AnimatorComponent() {};
+	AnimatorComponent(GameObject* owner, std::vector<SDL_Texture*> _txs) : textures{_txs}
 	{
 		frames = textures.size();
+		Owner = owner;
 	}
 
 	SpriteComponent* rMainSprite = nullptr;
@@ -66,6 +76,11 @@ struct AnimatorComponent : public Component
 
 struct RelocatableComponent : public Component
 {
+	RelocatableComponent(GameObject* owner)
+	{
+		Owner = owner;
+	}
+
 	std::vector<SDL_Rect*> Rects;
 	int LimitX = 0;
 	int LimitY = 0;
@@ -75,6 +90,11 @@ struct RelocatableComponent : public Component
 
 struct MovableComponent : public Component
 {
+	MovableComponent(GameObject* owner)
+	{
+		Owner = owner;
+	}
+
 	std::vector<SDL_Rect*> Rects;
 	double HMoveSpeed = 0;
 	double VMoveSpeed = 0;
@@ -91,6 +111,11 @@ struct MovableComponent : public Component
 
 struct RotatorComponent : public Component
 {
+	RotatorComponent(GameObject* owner)
+	{
+		Owner = owner;
+	}
+
 	double RotationRate = 0;
 	double* Rotation = new double{0};
 	double MinAngle = 0.f;
@@ -99,6 +124,11 @@ struct RotatorComponent : public Component
 
 struct GravityComponent : public Component
 {
+	GravityComponent(GameObject* owner)
+	{
+		Owner = owner;
+	}
+
 	MovableComponent* refMovable = nullptr;
 	double GravityForce = 0;
 
@@ -110,6 +140,11 @@ struct GravityComponent : public Component
 
 struct CollisionComponent : public Component
 {
+	CollisionComponent(GameObject* owner)
+	{
+		Owner = owner;
+	}
+
 	SDL_Rect* Rect = nullptr;
 	std::function<void(SDL_Rect*)> OnCollision;
 
@@ -119,6 +154,11 @@ struct CollisionComponent : public Component
 
 struct FlapComponent : public Component
 {
+	FlapComponent(GameObject* owner)
+	{
+		Owner = owner;
+	}
+
 	GravityComponent* Gravity = nullptr;
 	double FlapForce = 0;
 	SDL_KeyCode KeyCode;

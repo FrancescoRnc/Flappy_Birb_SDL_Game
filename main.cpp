@@ -20,5 +20,6 @@ int main()
 	std::cout << std::endl;
 	engine->OnExitGame();
 	delete(engine);
+	std::cout<< "Program Exit." <<std::endl;
 	return 0;
 }

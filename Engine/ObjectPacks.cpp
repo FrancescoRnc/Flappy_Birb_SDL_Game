@@ -4,7 +4,7 @@
 PlayerObjPack::PlayerObjPack()
 {
 	MainObject = new GameObject("Player");
-	Animator = new AnimatorComponent({FileManager::Get()->
+	Animator = new AnimatorComponent(MainObject, {FileManager::Get()->
 									  GetTexture("redbird-upflap"),
 									  FileManager::Get()->
 									  GetTexture("redbird-midflap"),
@@ -12,22 +12,22 @@ PlayerObjPack::PlayerObjPack()
 									  GetTexture("redbird-downflap"),
 									  FileManager::Get()->
 									  GetTexture("redbird-midflap")});
-	Sprite = new SpriteComponent(nullptr, Animator->textures[0],
+	Sprite = new SpriteComponent(MainObject, nullptr, Animator->textures[0],
 								 {}, {}, nullptr, SDL_FLIP_NONE);
-	Movement = new MovableComponent();
-	Rotator = new RotatorComponent();
-	Gravity = new GravityComponent();
-	Collision = new CollisionComponent();
-	Flap = new FlapComponent();
+	Movement = new MovableComponent(MainObject);
+	Rotator = new RotatorComponent(MainObject);
+	Gravity = new GravityComponent(MainObject);
+	Collision = new CollisionComponent(MainObject);
+	Flap = new FlapComponent(MainObject);
 	Flap->DoFlap = new InputAction();
 
 	GameOver = new GameObject("Game Over");
-	GameOverSprite = new SpriteComponent(nullptr, FileManager::Get()->
+	GameOverSprite = new SpriteComponent(GameOver, nullptr, FileManager::Get()->
 										 GetTexture("gameover"),
 										 {}, {39, 100}, nullptr, SDL_FLIP_NONE);
 }
 
-void PlayerObjPack::Load()
+void PlayerObjPack::Load(ComponentManager* mgr)
 {
 	MainObject->PosX = &Sprite->DstRect.x;
 	MainObject->PosY = &Sprite->DstRect.y;
@@ -45,18 +45,7 @@ void PlayerObjPack::Load()
 	Collision->Rect = &Sprite->DstRect;
 	Collision->CollisionPin = 0x00000001;
 	Collision->CollisionBitmask = 0x00000110;
-	//Collision->OnCollision = [this](SDL_Rect* other)
-	//{
-	//	// FINISH GAME OVER 
-	//
-	//	
-	//	Flap->DoFlap->ActionStack.top();
-	//	GameOverSprite->bActive = true;
-	//	Collision->bActive = false;
-	//	Flap->bActive = false;
-	//	//std::cout << "Player Collision" << std::endl;
-	//};
-
+	
 	Flap->Gravity = Gravity; 
 	Flap->FlapForce = 300.;
 	Flap->KeyCode = SDLK_SPACE;
@@ -67,30 +56,31 @@ void PlayerObjPack::Load()
 		Mix_PlayChannel(-1, AudioSystem::Get()->GetTrack("wing"), 0);
 		//std::cout << "Flap Flap!" << std::endl;
 	};
-	//Flap->DoFlap->ActionStack.push({});
 	Flap->DoFlap->ActionStack.push(Flap->Func);
 
 	GameOverSprite->bActive = false; GameOverSprite->RenderPriority = 100;
-	//OnGameOver = [this]()
-	//{
-	//	Mix_PlayChannel(-1, AudioSystem::Get()->GetTrack("hit"), 0);
-	//	Flap->Func();
-	//	auto components = ComponentManager::Get()->ComponentMap["Movable"];
-	//	for (auto c : components) c->bActive = false;
-	//	Movement->bActive = true;
-	//};
 
-	MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite", Sprite);
 	auto rm = RenderManager::Get();
 	rm->RegisterSprite(RenderLayer::Player, Sprite);
-	MainObject->BindComponent<AnimatorComponent>("Animator", "Flap Animation", Animator);
-	MainObject->BindComponent<MovableComponent>("Movable", "Movement", Movement);
-	MainObject->BindComponent<RotatorComponent>("Rotator", "Rotator", Rotator);
-	MainObject->BindComponent<CollisionComponent>("Collision", "Collider", Collision);
-	MainObject->BindComponent<GravityComponent>("Gravity", "Gravity",  Gravity);
-	MainObject->BindComponent<FlapComponent>("Flap", "Flap",  Flap);
-	GameOver->  BindComponent<SpriteComponent>("Sprite", "Game Over Sprite", GameOverSprite);
-	rm->RegisterSprite(RenderLayer::Player, GameOverSprite);
+	rm->RegisterSprite(RenderLayer::HUD, GameOverSprite);
+
+	mgr->SpriteContainer.AddBy(MainObject->Entity, Sprite);
+	mgr->SpriteContainer.AddBy(GameOver->Entity, GameOverSprite);
+	mgr->AnimatorContainer.AddBy(MainObject->Entity, Animator);
+	mgr->MovableContainer.AddBy(MainObject->Entity, Movement);
+	mgr->RotatorContainer.AddBy(MainObject->Entity, Rotator);
+	mgr->CollisionContainer.AddBy(MainObject->Entity, Collision);
+	mgr->GravityContainer.AddBy(MainObject->Entity, Gravity);
+	mgr->FlapContainer.AddBy(MainObject->Entity, Flap);
+
+	//MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite", Sprite);
+	//GameOver->  BindComponent<SpriteComponent>("Sprite", "Game Over Sprite", GameOverSprite);
+	//MainObject->BindComponent<AnimatorComponent>("Animator", "Flap Animation", Animator);
+	//MainObject->BindComponent<MovableComponent>("Movable", "Movement", Movement);
+	//MainObject->BindComponent<RotatorComponent>("Rotator", "Rotator", Rotator);
+	//MainObject->BindComponent<CollisionComponent>("Collision", "Collider", Collision);
+	//MainObject->BindComponent<GravityComponent>("Gravity", "Gravity",  Gravity);
+	//MainObject->BindComponent<FlapComponent>("Flap", "Flap",  Flap);	 
 }
 
 int PlayerObjPack::Update(const double deltatime)
@@ -122,18 +112,18 @@ void PlayerObjPack::Locate(int x, int y)
 BackgroundObjPack::BackgroundObjPack()
 {
 	MainObject = new GameObject("Background");
-	BGSprite = new SpriteComponent(nullptr, FileManager::Get()->
+	BGSprite = new SpriteComponent(MainObject, nullptr, FileManager::Get()->
 								   GetTexture("background-day-extend"),
 								   {}, {}, nullptr, SDL_FLIP_NONE);
-	BaseSprite = new SpriteComponent(nullptr, FileManager::Get()->
+	BaseSprite = new SpriteComponent(MainObject, nullptr, FileManager::Get()->
 									 GetTexture("base-extend"),
 									 {}, {0, 400}, nullptr, SDL_FLIP_NONE);
-	Movement = new MovableComponent();
-	Collision = new CollisionComponent();
-	BGRelocator = new RelocatableComponent();
+	Movement = new MovableComponent(MainObject);
+	Collision = new CollisionComponent(MainObject);
+	BGRelocator = new RelocatableComponent(MainObject);
 }
 
-void BackgroundObjPack::Load()
+void BackgroundObjPack::Load(ComponentManager* mgr)
 {
 	BGSprite->RenderPriority = 1;
 	BaseSprite->RenderPriority = 10;
@@ -162,14 +152,21 @@ void BackgroundObjPack::Load()
 	};
 
 
-	MainObject->BindComponent<SpriteComponent>("Sprite", "Background Sprite", BGSprite);
-	MainObject->BindComponent<SpriteComponent>("Sprite", "Base Sprite", BaseSprite);
 	auto rm = RenderManager::Get();
 	rm->RegisterSprite(RenderLayer::Background, BGSprite);
 	rm->RegisterSprite(RenderLayer::BackgroundBase, BaseSprite);
-	MainObject->BindComponent<MovableComponent>("Movable", "Background Movement", Movement);
-	MainObject->BindComponent<CollisionComponent>("Collision", "Base Collider", Collision);
-	MainObject->BindComponent<RelocatableComponent>("Relocator", "Relocator", BGRelocator);
+
+	mgr->SpriteContainer.AddBy(MainObject->Entity, BGSprite);
+	mgr->SpriteContainer.AddBy(MainObject->Entity, BaseSprite);
+	mgr->MovableContainer.AddBy(MainObject->Entity, Movement);
+	mgr->CollisionContainer.AddBy(MainObject->Entity, Collision);
+	mgr->RelocatableContainer.AddBy(MainObject->Entity, BGRelocator);
+
+	//MainObject->BindComponent<SpriteComponent>("Sprite", "Background Sprite", BGSprite);
+	//MainObject->BindComponent<SpriteComponent>("Sprite", "Base Sprite", BaseSprite);
+	//MainObject->BindComponent<MovableComponent>("Movable", "Background Movement", Movement);
+	//MainObject->BindComponent<CollisionComponent>("Collision", "Base Collider", Collision);
+	//MainObject->BindComponent<RelocatableComponent>("Relocator", "Relocator", BGRelocator);
 }
 
 int BackgroundObjPack::Update(const double deltatime)
@@ -182,16 +179,16 @@ PipesPairObjPack::PipesPairObjPack()
 {
 	MainObject = new GameObject("Pipes");
 
-	TopSprite = new SpriteComponent(nullptr, FileManager::Get()->
+	TopSprite = new SpriteComponent(MainObject, nullptr, FileManager::Get()->
 									GetTexture("pipe-green"),
 									{}, {}, nullptr, SDL_FLIP_VERTICAL);
-	TopCollision = new CollisionComponent();
+	TopCollision = new CollisionComponent(MainObject);
 	
-	BottomSprite = new SpriteComponent();
-	BottomCollision = new CollisionComponent();
+	BottomSprite = new SpriteComponent(MainObject);
+	BottomCollision = new CollisionComponent(MainObject);
 	
-	Movement = new MovableComponent();
-	Relocator = new RelocatableComponent();
+	Movement = new MovableComponent(MainObject);
+	Relocator = new RelocatableComponent(MainObject);
 
 	SDL_QueryTexture(TopSprite->Texture, nullptr, nullptr, nullptr, &pipeHeight);
 }
@@ -200,21 +197,21 @@ PipesPairObjPack::PipesPairObjPack(int x, int y)
 {
 	MainObject = new GameObject("Pipes");
 
-	TopSprite = new SpriteComponent(nullptr, FileManager::Get()->
+	TopSprite = new SpriteComponent(MainObject, nullptr, FileManager::Get()->
 									GetTexture("pipe-green"),
 									{}, {x, y}, nullptr, SDL_FLIP_VERTICAL);
-	TopCollision = new CollisionComponent();
+	TopCollision = new CollisionComponent(MainObject);
 
-	BottomSprite = new SpriteComponent();
-	BottomCollision = new CollisionComponent();
+	BottomSprite = new SpriteComponent(MainObject);
+	BottomCollision = new CollisionComponent(MainObject);
 
-	Movement = new MovableComponent();
-	Relocator = new RelocatableComponent();
+	Movement = new MovableComponent(MainObject);
+	Relocator = new RelocatableComponent(MainObject);
 
 	SDL_QueryTexture(TopSprite->Texture, nullptr, nullptr, nullptr, &pipeHeight);
 }
 
-void PipesPairObjPack::Load()
+void PipesPairObjPack::Load(ComponentManager* mgr)
 {
 	TopSprite->RenderPriority = 5;
 	*BottomSprite = *TopSprite;
@@ -259,15 +256,23 @@ void PipesPairObjPack::Load()
 		RandomizeY();
 	};
 
-	MainObject->BindComponent<SpriteComponent>("Sprite", "Top Pipe Sprite", TopSprite);
-	MainObject->BindComponent<SpriteComponent>("Sprite", "Bottom Pipe Sprite", BottomSprite);
 	auto rm = RenderManager::Get();
 	rm->RegisterSprite(RenderLayer::Environment, TopSprite);
 	rm->RegisterSprite(RenderLayer::Environment, BottomSprite);
-	MainObject->BindComponent<MovableComponent>("Movable", "Pipes Movement", Movement);
-	MainObject->BindComponent<CollisionComponent>("Collision", "Top Pipe Collider", TopCollision);
-	MainObject->BindComponent<CollisionComponent>("Collision", "Bottom Pipe Collider", BottomCollision);
-	MainObject->BindComponent<RelocatableComponent>("Relocator", "Relocator", Relocator);
+
+	mgr->SpriteContainer.AddBy(MainObject->Entity, TopSprite);
+	mgr->SpriteContainer.AddBy(MainObject->Entity, BottomSprite);
+	mgr->MovableContainer.AddBy(MainObject->Entity, Movement);
+	mgr->CollisionContainer.AddBy(MainObject->Entity, TopCollision);
+	mgr->CollisionContainer.AddBy(MainObject->Entity, BottomCollision);
+	mgr->RelocatableContainer.AddBy(MainObject->Entity, Relocator);
+
+	//MainObject->BindComponent<SpriteComponent>("Sprite", "Top Pipe Sprite", TopSprite);
+	//MainObject->BindComponent<SpriteComponent>("Sprite", "Bottom Pipe Sprite", BottomSprite);
+	//MainObject->BindComponent<MovableComponent>("Movable", "Pipes Movement", Movement);
+	//MainObject->BindComponent<CollisionComponent>("Collision", "Top Pipe Collider", TopCollision);
+	//MainObject->BindComponent<CollisionComponent>("Collision", "Bottom Pipe Collider", BottomCollision);
+	//MainObject->BindComponent<RelocatableComponent>("Relocator", "Relocator", Relocator);
 
 	RandomizeY();
 }
@@ -289,7 +294,7 @@ void PipesPairObjPack::LocatePipesAdditive(int addX)
 
 void PipesPairObjPack::RandomizeY()
 {
-	int newBY = rand()%100+200;
+	int newBY = rand() % 100 + 200;
 	int pipesOffset = rand() % 50 + 100;
 	int newTY = newBY - pipesOffset - pipeHeight;
 	BottomSprite->DstRect.y = newBY;
@@ -311,10 +316,10 @@ ScoreObjPack::ScoreObjPack(std::vector<PipesPairObjPack*> pairs)
 	Pairs = pairs;
 	CurrentPipesPair = pairs[currentPipesIndex];
 	
-	ScoreCollision = new CollisionComponent();
+	ScoreCollision = new CollisionComponent(MainObject);
 }
 
-void ScoreObjPack::Load()
+void ScoreObjPack::Load(ComponentManager* mgr)
 {
 	Hitbox = {0,0,30,400};
 	ScoreCollision->Rect = &Hitbox;
@@ -326,7 +331,9 @@ void ScoreObjPack::Load()
 		CurrentPipesPair = GetNextPair();
 	};
 
-	MainObject->BindComponent<CollisionComponent>("Collision", "Hitbox", ScoreCollision);
+	mgr->CollisionContainer.AddBy(MainObject->Entity, ScoreCollision);
+
+	//MainObject->BindComponent<CollisionComponent>("Collision", "Hitbox", ScoreCollision);
 }
 
 int ScoreObjPack::Update(const double deltatime)
@@ -379,26 +386,31 @@ ScoreCounterObjPack::ScoreCounterObjPack()
 		FileManager::Get()->GetTexture("9"),
 	};
 
-	SpriteUnit = new SpriteComponent(nullptr, NumbersTex[0],
+	SpriteUnit = new SpriteComponent(MainObject, nullptr, NumbersTex[0],
 									 {}, {147, 30}, nullptr, SDL_FLIP_NONE);
-	SpriteTen = new SpriteComponent(nullptr, NumbersTex[0],
+	SpriteTen = new SpriteComponent(MainObject, nullptr, NumbersTex[0],
 									{}, {123, 30}, nullptr, SDL_FLIP_NONE);
-	SpriteHundred = new SpriteComponent(nullptr, NumbersTex[0],
+	SpriteHundred = new SpriteComponent(MainObject, nullptr, NumbersTex[0],
 									    {}, {99, 30}, nullptr, SDL_FLIP_NONE);
 }
 
-void ScoreCounterObjPack::Load()
+void ScoreCounterObjPack::Load(ComponentManager* mgr)
 {
 	SpriteHundred->RenderPriority =
 		SpriteTen->RenderPriority =
 		SpriteUnit->RenderPriority = 100;
 
-	MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite Unit", SpriteUnit);
-	MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite Ten", SpriteTen);
-	MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite Hundred", SpriteHundred);
 	RenderManager::Get()->RegisterSprite(RenderLayer::HUD, SpriteUnit);
 	RenderManager::Get()->RegisterSprite(RenderLayer::HUD, SpriteTen);
 	RenderManager::Get()->RegisterSprite(RenderLayer::HUD, SpriteHundred);
+
+	mgr->SpriteContainer.AddBy(MainObject->Entity, SpriteUnit);
+	mgr->SpriteContainer.AddBy(MainObject->Entity, SpriteTen);
+	mgr->SpriteContainer.AddBy(MainObject->Entity, SpriteHundred);
+
+	//MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite Unit", SpriteUnit);
+	//MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite Ten", SpriteTen);
+	//MainObject->BindComponent<SpriteComponent>("Sprite", "Sprite Hundred", SpriteHundred);
 }
 
 int ScoreCounterObjPack::Update(const double deltatime)

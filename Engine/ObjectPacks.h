@@ -29,7 +29,7 @@ class PlayerObjPack : public IObjectPack, public ILocatable
 	SpriteComponent* GameOverSprite;
 	std::function<void()> OnGameOver;
 
-	virtual void Load() override;
+	virtual void Load(ComponentManager* mgr) override;
 
 	virtual int Update(const double deltatime) override;
 
@@ -48,7 +48,7 @@ class BackgroundObjPack : public IObjectPack
 	CollisionComponent* Collision;
 	RelocatableComponent* BGRelocator;
 
-	virtual void Load() override;
+	virtual void Load(ComponentManager* mgr) override;
 
 	virtual int Update(const double deltatime) override;
 };
@@ -66,7 +66,7 @@ class PipesPairObjPack : public IObjectPack, public ILocatable
 	CollisionComponent* BottomCollision;
 	RelocatableComponent* Relocator;
 
-	virtual void Load() override;
+	virtual void Load(ComponentManager* mgr) override;
 
 	virtual int Update(const double deltatime) override;
 
@@ -100,7 +100,7 @@ class ScoreObjPack : public IObjectPack
 	CollisionComponent* ScoreCollision = nullptr;
 
 	// Inherited via IObjectPack
-	virtual void Load() override;
+	virtual void Load(ComponentManager* mgr) override;
 
 	virtual int Update(const double deltatime) override;
 	// - - - -
@@ -125,7 +125,7 @@ class ScoreCounterObjPack : public IObjectPack
 	SpriteComponent* SpriteHundred = nullptr;
 
 	// Inherited via IObjectPack
-	virtual void Load() override;
+	virtual void Load(ComponentManager* mgr) override;
 
 	virtual int Update(const double deltatime) override;
 	// - - - -

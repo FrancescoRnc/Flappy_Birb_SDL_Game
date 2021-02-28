@@ -3,6 +3,10 @@
 
 // Here are collected all the Interfaces
 
+class ComponentManager;
+class GameObject;
+
+
 class IInitiable
 {
     public:
@@ -17,15 +21,13 @@ class IUpdatable
     virtual int Update(const double deltatime) = 0;
 };
 
-class GameObject;
-
 class IObjectPack : public IUpdatable
 {
     public:
 
     GameObject* MainObject;
 
-    virtual void Load() = 0;
+    virtual void Load(ComponentManager* mgr) = 0;
 
     virtual int Update(const double deltatime) = 0;
 };
