@@ -16,7 +16,7 @@ struct Component
 	Component() {}
 	Component(GameObject* owner) : Owner{owner} {}
 
-	int EntityOwner = -1;
+	//int EntityOwner = -1;
 	GameObject* Owner = nullptr;
 	bool bActive = true;
 };

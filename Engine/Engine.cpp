@@ -13,6 +13,7 @@ Engine::Engine()
 								  SDL_WINDOWPOS_CENTERED});
 	audioSys = new AudioSystem();
 	componentMgr = new ComponentManager();
+	physicsMgr = new PhysicsManager();
 	gameEditor = new GameEditor();
 	gameEditor->refEngine = this;
 	current_scene = new Scene();
@@ -25,6 +26,7 @@ Engine::~Engine()
 	delete(clock);  
 	delete(current_scene);
 	delete(gameEditor);
+	delete(physicsMgr);
 	delete(componentMgr);
 	delete(audioSys);
 	delete(renderMgr);
@@ -100,6 +102,7 @@ int Engine::Update(const double deltatime)
 	int result = 0;
 	result = ComponentManager::Get()->Update(deltatime);
 	result = current_scene->Update(deltatime);
+	result = physicsMgr->Update(deltatime);
 	return result;
 }
 

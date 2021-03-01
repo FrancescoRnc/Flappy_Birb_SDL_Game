@@ -21,6 +21,17 @@ class IUpdatable
     virtual int Update(const double deltatime) = 0;
 };
 
+class IActivable
+{
+    public:
+
+    //bool bActive;
+
+    virtual void Active() = 0;
+
+    virtual void Disactive() = 0;
+};
+
 class IObjectPack : public IUpdatable
 {
     public:

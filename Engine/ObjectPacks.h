@@ -4,6 +4,7 @@
 #include "InputHandler.h"
 #include "Interfaces.h"
 #include "RenderManager.h"
+#include "PhysicsManager.h"
 #include "AudioSystem.h"
 
 

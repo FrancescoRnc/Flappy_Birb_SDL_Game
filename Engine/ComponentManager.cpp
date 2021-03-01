@@ -17,8 +17,6 @@ ComponentManager::ComponentManager()
 		{"Flap", {}}
 	};*/
 
-	//ComponentMap = CreateEmptyMap<SpriteComponent, AnimatorComponent>();
-
 	_instance = this;
 }
 
@@ -121,7 +119,7 @@ int ComponentManager::Update(const double deltatime)
 
 	// Collision Handle
 	//auto colliders = ComponentMap["Collision"]; 
-	auto colliders = CollisionContainer.components;
+	/*auto colliders = CollisionContainer.components;
 	for (auto entity:colliders)
 	{
 		for (auto comp:entity.second)
@@ -146,7 +144,7 @@ int ComponentManager::Update(const double deltatime)
 				}
 			}
 		}		
-	}
+	}*/
 
 	return 0;
 }

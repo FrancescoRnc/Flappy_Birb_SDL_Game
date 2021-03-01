@@ -12,17 +12,19 @@
 
 
 template<typename C>
-class ComponentContainer
+struct ComponentContainer
 {
-	public:
+	std::map<unsigned int, std::vector<C*>> components = {};
+	std::map<unsigned int, std::vector<C*>> excluded = {};
 
-	std::map<int, std::vector<C*>> components = {};
+	unsigned int ActiveQuantity = 0;
 
 	void AddBy(int entity, C* comp) 
 	{
 		static_assert(std::is_base_of<Component, C>::value, "Class not derived from Component!");
 
 		components[entity].push_back(comp);
+		ActiveQuantity++;
 	}
 
 	C* GetFrom(int entity)
@@ -31,6 +33,8 @@ class ComponentContainer
 		
 		return components[entity][0];
 	}
+
+	~ComponentContainer() { components.clear(); }
 };
 
 
@@ -57,22 +61,11 @@ class ComponentManager : public IUpdatable
 
 	// Should be used to exclude some instanced Components from pipeline
 	// NOT USED YET
-	std::map<std::string, std::vector<Component*>> ComponentExclusionMap;
+	std::map<int, std::vector<Component*>> ExclusionMap;
 
 	void AddComponent(const std::string type, Component* _component)
 	{
-		//std::tuple<SpriteComponent*, AnimatorComponent*> comps = {new SpriteComponent(), new AnimatorComponent()}; 
 		//ComponentMap[type].push_back(_component);
-	}
-
-	template<typename ... Args>
-	auto CreateEmptyMap()
-	{
-		std::map<std::string, std::vector<Component*>> map;
-
-		//map.insert({typeid(Args).name(), {}});
-		
-		return map;
 	}
 
 	// Sorts Sprite Components by their Render Priority

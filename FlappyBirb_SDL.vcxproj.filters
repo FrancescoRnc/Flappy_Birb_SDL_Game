@@ -579,6 +579,9 @@
     <ClInclude Include="Engine\CustomEventSystem.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\PhysicsManager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SDL2\lib\x64\SDL2.dll" />
@@ -648,6 +651,9 @@
       <Filter>File di origine</Filter>
     </ClCompile>
     <ClCompile Include="Engine\CustomEventSystem.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\PhysicsManager.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>

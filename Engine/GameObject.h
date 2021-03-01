@@ -11,7 +11,7 @@ class GameObject
 	GameObject();
 	~GameObject();
 
-	GameObject(std::string name) : ObjectName{name} { }
+	GameObject(std::string name) : ObjectName{name} { Entity = ++Entities; }
 
 	// Position in screen coordinates.
 	// These are pointers because you can use them pointing to other variables, such Rect.x/y ecc.

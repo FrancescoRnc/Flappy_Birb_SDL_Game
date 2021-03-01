@@ -7,6 +7,7 @@
 #include "AudioSystem.h"
 #include "ComponentManager.h"
 #include "RenderManager.h"
+#include "PhysicsManager.h"
 #include "InputHandler.h"
 #include "GameEditor.h"
 
@@ -39,6 +40,7 @@ struct Engine : public IInitiable, public IUpdatable
 	AudioSystem* audioSys = nullptr;
 	ComponentManager* componentMgr = nullptr;
 	RenderManager* renderMgr = nullptr;
+	PhysicsManager* physicsMgr = nullptr;
 	KeyMouseInputHandler* KeyboardHandler = nullptr;
 	GameEditor* gameEditor = nullptr;
 

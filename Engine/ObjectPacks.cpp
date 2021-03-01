@@ -44,7 +44,7 @@ void PlayerObjPack::Load(ComponentManager* mgr)
 
 	Collision->Rect = &Sprite->DstRect;
 	Collision->CollisionPin = 0x00000001;
-	Collision->CollisionBitmask = 0x00000110;
+	Collision->CollisionBitmask = 0x00001110;
 	
 	Flap->Gravity = Gravity; 
 	Flap->FlapForce = 300.;
@@ -63,6 +63,8 @@ void PlayerObjPack::Load(ComponentManager* mgr)
 	auto rm = RenderManager::Get();
 	rm->RegisterSprite(RenderLayer::Player, Sprite);
 	rm->RegisterSprite(RenderLayer::HUD, GameOverSprite);
+	auto pm = PhysicsManager::Get();
+	pm->AddCollider(Collision);
 
 	mgr->SpriteContainer.AddBy(MainObject->Entity, Sprite);
 	mgr->SpriteContainer.AddBy(GameOver->Entity, GameOverSprite);
@@ -155,6 +157,7 @@ void BackgroundObjPack::Load(ComponentManager* mgr)
 	auto rm = RenderManager::Get();
 	rm->RegisterSprite(RenderLayer::Background, BGSprite);
 	rm->RegisterSprite(RenderLayer::BackgroundBase, BaseSprite);
+	PhysicsManager::Get()->AddCollider(Collision);
 
 	mgr->SpriteContainer.AddBy(MainObject->Entity, BGSprite);
 	mgr->SpriteContainer.AddBy(MainObject->Entity, BaseSprite);
@@ -259,6 +262,8 @@ void PipesPairObjPack::Load(ComponentManager* mgr)
 	auto rm = RenderManager::Get();
 	rm->RegisterSprite(RenderLayer::Environment, TopSprite);
 	rm->RegisterSprite(RenderLayer::Environment, BottomSprite);
+	PhysicsManager::Get()->AddCollider(TopCollision);
+	PhysicsManager::Get()->AddCollider(BottomCollision);
 
 	mgr->SpriteContainer.AddBy(MainObject->Entity, TopSprite);
 	mgr->SpriteContainer.AddBy(MainObject->Entity, BottomSprite);
@@ -323,13 +328,15 @@ void ScoreObjPack::Load(ComponentManager* mgr)
 {
 	Hitbox = {0,0,30,400};
 	ScoreCollision->Rect = &Hitbox;
-	ScoreCollision->CollisionPin = (uint8_t)0x00001000;
+	ScoreCollision->CollisionPin = 0x00001000;
 	ScoreCollision->CollisionBitmask = (uint8_t)0x00000001;
 	ScoreCollision->OnCollision = [this](SDL_Rect* other)
 	{
 		IncreaseScore();
 		CurrentPipesPair = GetNextPair();
 	};
+
+	PhysicsManager::Get()->AddCollider(ScoreCollision);
 
 	mgr->CollisionContainer.AddBy(MainObject->Entity, ScoreCollision);
 

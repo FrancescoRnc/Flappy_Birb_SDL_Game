@@ -168,6 +168,7 @@
     <ClInclude Include="Engine\ObjectPacks.h" />
     <ClInclude Include="Engine\RenderManager.h" />
     <ClInclude Include="Engine\GameEditor.h" />
+    <ClInclude Include="Engine\PhysicsManager.h" />
     <ClInclude Include="SDL2-2.0.14\include\begin_code.h" />
     <ClInclude Include="SDL2-2.0.14\include\close_code.h" />
     <ClInclude Include="SDL2-2.0.14\include\SDL.h" />
@@ -384,6 +385,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\ObjectPacks.cpp" />
     <ClCompile Include="Engine\RenderManager.cpp" />
+    <ClCompile Include="Engine\PhysicsManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="Assets\audio\die.wav" />

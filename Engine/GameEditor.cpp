@@ -22,8 +22,22 @@ std::vector<IObjectPack*> GameEditor::LoadObjects()
 	background = new BackgroundObjPack();
 
 	score = new ScoreObjPack(pipesPairs);
+	score->ScoreCollision->OnCollision = [this](SDL_Rect* other)
+	{
+		score->IncreaseScore();
+		score->CurrentPipesPair = score->GetNextPair();
+	};
 	counter = new ScoreCounterObjPack();
 	ScoreBridge* Sbridge = new ScoreBridge(score, counter);
+
+	// Collisions
+	auto physMgr = PhysicsManager::Get();
+	physMgr->Collisions.insert({{0x00000001, 0x00000010},
+							   {player->Collision->OnCollision, [this](SDL_Rect*) {}}});
+	physMgr->Collisions.insert({{0x00000001, 0x00000100},
+							   {player->Collision->OnCollision, [this](SDL_Rect*) {}}});
+	physMgr->Collisions.insert({{0x00000001, 0x00001000}, 
+							   {[this](SDL_Rect*) {}, score->ScoreCollision->OnCollision}});
 
 	std::vector<IObjectPack*> objects = {
 		player,
