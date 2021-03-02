@@ -4,6 +4,16 @@
 #include "ComponentManager.h"
 
 #pragma once
+
+enum class CollisionPins 
+{ 
+    NONE = 0,
+    Player = 0x00000001, 
+    Pipe = 0x00000010, 
+    Background = 0x00000100, 
+    Score = 0x00001000
+};
+
 class PhysicsManager : public IUpdatable
 {
     public:

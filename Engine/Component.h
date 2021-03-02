@@ -148,7 +148,7 @@ struct CollisionComponent : public Component
 	SDL_Rect* Rect = nullptr;
 	std::function<void(SDL_Rect*)> OnCollision;
 
-	unsigned int CollisionPin = 0;
+	unsigned int CollisionPin;
 	unsigned int CollisionBitmask = 0;
 };
 

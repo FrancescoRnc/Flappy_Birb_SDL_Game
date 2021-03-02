@@ -43,7 +43,7 @@ void PlayerObjPack::Load(ComponentManager* mgr)
 	Gravity->bActive = false;
 
 	Collision->Rect = &Sprite->DstRect;
-	Collision->CollisionPin = 0x00000001;
+	Collision->CollisionPin = (unsigned int)CollisionPins::Player;
 	Collision->CollisionBitmask = 0x00001110;
 	
 	Flap->Gravity = Gravity; 
@@ -134,7 +134,7 @@ void BackgroundObjPack::Load(ComponentManager* mgr)
 	};
 	Movement->HMoveSpeed = -150.;
 	Collision->Rect = &BaseSprite->DstRect;
-	Collision->CollisionPin = 0x00000100;
+	Collision->CollisionPin = (unsigned int)CollisionPins::Background;
 	Collision->CollisionBitmask = 0x00000001;
 	Collision->OnCollision = [this](SDL_Rect* other)
 	{
@@ -220,7 +220,7 @@ void PipesPairObjPack::Load(ComponentManager* mgr)
 	*BottomSprite = *TopSprite;
 	BottomSprite->FlipRule = SDL_FLIP_NONE;
 	TopCollision->Rect = &TopSprite->DstRect;
-	TopCollision->CollisionPin = 0x00000010;
+	TopCollision->CollisionPin = (unsigned int)CollisionPins::Pipe;
 	TopCollision->CollisionBitmask = 0x00000001;
 	auto onCollision = [this](SDL_Rect* other)
 	{
@@ -328,7 +328,7 @@ void ScoreObjPack::Load(ComponentManager* mgr)
 {
 	Hitbox = {0,0,30,400};
 	ScoreCollision->Rect = &Hitbox;
-	ScoreCollision->CollisionPin = 0x00001000;
+	ScoreCollision->CollisionPin = (unsigned int)CollisionPins::Score;
 	ScoreCollision->CollisionBitmask = (uint8_t)0x00000001;
 	ScoreCollision->OnCollision = [this](SDL_Rect* other)
 	{

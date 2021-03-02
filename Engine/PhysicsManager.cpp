@@ -24,7 +24,7 @@ int PhysicsManager::Update(const double deltatime)
             for (size_t o = c+1; o<colliders_size; o++)
             {
                 auto other = Colliders[o];
-                if ((coll->CollisionBitmask&other->CollisionPin)&&
+                if ((coll->CollisionBitmask & other->CollisionPin) &&
                     SDL_HasIntersection(coll->Rect, other->Rect))
                 {
                     auto c = Collisions[{coll->CollisionPin, other->CollisionPin}];

@@ -15,6 +15,8 @@ class GameEditor
 
     Engine* refEngine;
 
+    void Post_Load();
+
     // Put here your Object Packs
     PlayerObjPack* player;
     std::vector<PipesPairObjPack*> pipesPairs;
@@ -22,7 +24,7 @@ class GameEditor
     ScoreObjPack* score;
     ScoreCounterObjPack* counter;
     
-    int GameStart();
+    int NewGameStart();
 
     void OnGameOver();
 

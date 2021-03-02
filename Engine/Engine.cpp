@@ -65,11 +65,7 @@ int Engine::Initialize()
 	KeyboardHandler = new KeyMouseInputHandler();
 	if (KeyboardHandler->Initialize()) return 1;
 
-	// Scene
-	current_scene->Load(gameEditor->LoadObjects());
-
-	KeyboardHandler->InputMap.insert({SDLK_SPACE, new InputAction()});
-	KeyboardHandler->InputMap.insert({SDLK_BACKSPACE, new InputAction()});
+	
 
 	std::cout << "Initialization Completed!" << std::endl;
 
@@ -108,8 +104,16 @@ int Engine::Update(const double deltatime)
 
 void Engine::OnStartGame()
 {
+	// Scene
+	current_scene->Load(gameEditor->LoadObjects());
+
+	KeyboardHandler->InputMap.insert({SDLK_SPACE, new InputAction()});
 	KeyboardHandler->InputMap[SDLK_SPACE]->ActionStack.push(gameEditor->player->Flap->Func);
-	gameEditor->GameStart();
+	KeyboardHandler->InputMap.insert({SDLK_BACKSPACE, new InputAction()});
+
+	gameEditor->Post_Load();
+	gameEditor->NewGameStart();
+
 	std::cout<<"Game started!"<<std::endl<<std::endl;
 }
 
@@ -118,7 +122,26 @@ void Engine::OnExitGame()
 	std::cout << "Exiting the Game..." << std::endl << std::endl;
 }
 
-int GameEditor::GameStart()
+void GameEditor::Post_Load()
+{
+	// Here you define Collision Events
+	auto physMgr = PhysicsManager::Get();
+	physMgr->Collisions.insert({{(unsigned int)CollisionPins::Player, 
+							     (unsigned int)CollisionPins::Background},
+							   {player->Collision->OnCollision, 
+							   [this](SDL_Rect*) {}}});
+	physMgr->Collisions.insert({{(unsigned int)CollisionPins::Player, 
+							     (unsigned int)CollisionPins::Pipe},
+							   {player->Collision->OnCollision, 
+							   [this](SDL_Rect*) {}}});
+	physMgr->Collisions.insert({{(unsigned int)CollisionPins::Player, 
+							     (unsigned int)CollisionPins::Score},
+							   {[this](SDL_Rect*) {}, 
+							   score->ScoreCollision->OnCollision}});
+
+}
+
+int GameEditor::NewGameStart()
 {
 	player->Locate(70, 200);
 	*player->Rotator->Rotation = 0;
@@ -164,7 +187,7 @@ void GameEditor::OnGameOver()
 	auto restartFunc = [this]()
 	{
 		refEngine->KeyboardHandler->InputMap[SDLK_SPACE]->ActionStack.pop();
-		GameStart();
+		NewGameStart();
 		refEngine->KeyboardHandler->InputMap[SDLK_BACKSPACE]->ActionStack.pop();
 	};
 	refEngine->KeyboardHandler->InputMap[SDLK_BACKSPACE]->ActionStack.push(restartFunc);
@@ -172,7 +195,6 @@ void GameEditor::OnGameOver()
 
 void GameEditor::StopMovingObjects()
 {
-	//auto moves = ComponentManager::Get()->ComponentMap["Movable"];
 	auto moves = ComponentManager::Get()->MovableContainer.components;
 
 	for (auto entity:moves)
